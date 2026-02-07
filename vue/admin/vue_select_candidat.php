@@ -1,46 +1,43 @@
 <div class="admin-container">
-    <h3 class="admin-title">Liste des Candidats</h3>
+    <h3 style="color:#ffcc00; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">
+        Gestion des Candidats
+    </h3>
+    
     <table class="elite-table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Email</th>
-                <th>Date Code</th>
-                <th>Actions</th>
+                <th>NOM</th>
+                <th>PRÉNOM</th>
+                <th>EMAIL</th>
+                <th>ACTIONS</th>
             </tr>
         </thead>
         <tbody>
-            <?php if (isset($lescandidats) && is_array($lescandidats)) : ?>
-                <?php foreach ($lescandidats as $unCandidat) : ?>
+            <?php if (!empty($lescandidats) && is_array($lescandidats)): ?>
+                <?php foreach ($lescandidats as $unCandidat): ?>
                     <tr>
-                        <td><span class="badge"><?php echo $unCandidat['idcandidat']; ?></span></td>
-                        <td><?php echo htmlspecialchars($unCandidat['nom']); ?></td>
-                        <td><?php echo htmlspecialchars($unCandidat['prenom']); ?></td>
-                        <td><?php echo (!empty($unCandidat['email'])) ? htmlspecialchars($unCandidat['email']) : '-'; ?></td>
-                        <td>
-                            <?php 
-                                if (!empty($unCandidat['date_prevue_code'])) {
-                                    echo date('d/m/Y', strtotime($unCandidat['date_prevue_code']));
-                                } else {
-                                    echo '<span class="text-dim">Non fixée</span>';
-                                }
-                            ?>
-                        </td>
-                        <td class="actions">
-                            <a href="index.php?page=5&action=edit&idcandidat=<?php echo $unCandidat['idcandidat']; ?>" title="Modifier">
-                                <img src="image/modifier.png" height="20">
+                        <td><span class="badge"><?= $unCandidat['idcandidat'] ?></span></td>
+                        <td><?= htmlspecialchars($unCandidat['nom']) ?></td>
+                        <td><?= htmlspecialchars($unCandidat['prenom']) ?></td>
+                        <td><?= htmlspecialchars($unCandidat['email']) ?></td>
+                        <td style="text-align:center;">
+                            <a href="index.php?page=5&action=edit&idcandidat=<?= $unCandidat['idcandidat'] ?>">
+                                <img src="image/modifier.png" height="20" title="Modifier">
                             </a>
-                            <a href="index.php?page=5&action=sup&idcandidat=<?php echo $unCandidat['idcandidat']; ?>" 
-                               onclick="return confirm('Supprimer ce candidat ?');" title="Supprimer">
-                                <img src="image/supprimer.png" height="20">
+                            <a href="index.php?page=5&action=sup&idcandidat=<?= $unCandidat['idcandidat'] ?>" 
+                               onclick="return confirm('Supprimer définitivement ?');" style="margin-left:15px;">
+                                <img src="image/supprimer.png" height="20" title="Supprimer">
                             </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else : ?>
-                <tr><td colspan="6">Aucun candidat trouvé.</td></tr>
+            <?php else: ?>
+                <tr>
+                    <td colspan="5" style="text-align:center; color:#666; padding:30px;">
+                        Aucun candidat enregistré dans la base de données.
+                    </td>
+                </tr>
             <?php endif; ?>
         </tbody>
     </table>

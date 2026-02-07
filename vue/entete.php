@@ -1,16 +1,18 @@
 <nav>
-    <a href="index.php?page=1">Accueil</a> |
-    <a href="index.php?page=2">Nos Tarifs</a> |
-    <a href="index.php?page=3">Nos Véhicules</a> |
+    <ul>
+        <li><a href="index.php?page=1">ACCUEIL</a></li>
+        <li><a href="index.php?page=2">PACKS & TARIFS</a></li>
+        <li><a href="index.php?page=3">FLOTTE VÉHICULES</a></li>
 
-    <?php if (!isset($_SESSION['email'])) : ?>
-        <a href="index.php?page=4">Connexion</a>
-    <?php else : ?>
-        <a href="index.php?page=5">Candidats</a> |
-        <a href="index.php?page=6">Moniteurs</a> |
-        <a href="index.php?page=7">Véhicules</a> |
-        <a href="index.php?page=8">Planning Cours</a> |
-        <a href="index.php?page=9">Déconnexion</a>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['email'])): ?>
+            <li><a href="index.php?page=5">CANDIDATS</a></li>
+            <li><a href="index.php?page=6">MONITEURS</a></li>
+            <li><a href="index.php?page=7">GARAGE</a></li>
+            <li><a href="index.php?page=8">PLANNING</a></li>
+            <li><a href="index.php?page=9" style="color: #ff4444;">QUITTER</a></li>
+        <?php else: ?>
+            <li><a href="index.php?page=4">ESPACE CLIENT</a></li>
+            <li><a href="index.php?page=10" style="color: #ffcc00; font-weight: bold;">S'INSCRIRE</a></li>
+        <?php endif; ?>
+    </ul>
 </nav>
-<hr>
