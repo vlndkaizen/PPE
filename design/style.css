@@ -1,0 +1,35 @@
+/* Supprime les bordures blanches entre les éléments du menu */
+header, nav, ul, li {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #1a1a1a; /* Couleur unie sans coupure */
+}
+
+nav ul li a {
+    border-right: none !important; /* Enlève les barres de séparation */
+    padding: 15px 25px;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+}
+
+/* Elite Table sans lignes blanches horizontales inutiles */
+.elite-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: transparent;
+}
+
+.elite-table th, .elite-table td {
+    border: none; /* On enlève les bordures de cellules */
+    border-bottom: 1px solid #333; /* Juste une ligne fine sous chaque rangée */
+    padding: 12px;
+}
