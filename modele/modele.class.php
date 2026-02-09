@@ -102,7 +102,7 @@ class Modele {
         $select = $this->pdo->prepare($req); $select->execute();
         return $select->fetchAll();
     }
-
+    
     public function delete_vehicule($idvehicule) {
         $req = "DELETE FROM vehicule WHERE idvehicule = :idvehicule";
         $delete = $this->pdo->prepare($req);

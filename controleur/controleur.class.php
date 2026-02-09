@@ -36,25 +36,26 @@ class Controleur {
     }
 
     /* --- MONITEURS --- */
-    public function insert_moniteur($tab) {
-        $this->unModele->insert_moniteur($tab);
-    }
+public function insert_moniteur($tab){
+    return $this->unModele->insert_moniteur($tab);
+}
 
-    public function selectAll_moniteurs() {
-        return $this->unModele->selectAll_moniteurs();
-    }
+public function update_moniteur($tab){
+    return $this->unModele->update_moniteur($tab);
+}
 
-    public function delete_moniteur($idmoniteur) {
-        $this->unModele->delete_moniteur($idmoniteur);
-    }
+public function delete_moniteur($idmoniteur){
+    return $this->unModele->delete_moniteur($idmoniteur);
+}
 
-    public function selectWhere_moniteur($idmoniteur) {
-        return $this->unModele->selectWhere_moniteur($idmoniteur);
-    }
+public function selectWhere_moniteur($idmoniteur){
+    return $this->unModele->selectWhere_moniteur($idmoniteur);
+}
 
-    public function update_moniteur($tab) {
-        $this->unModele->update_moniteur($tab);
-    }
+public function selectAll_moniteurs(){
+    return $this->unModele->selectAll_moniteurs();
+}
+
 
     /* --- VEHICULES --- */
     public function insert_vehicule($tab) {

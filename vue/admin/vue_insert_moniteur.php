@@ -5,6 +5,7 @@
             <div class="input-group"><label>Nom</label><input type="text" name="nom" value="<?= $leMoniteur['nom'] ?? '' ?>" required></div>
             <div class="input-group"><label>Prénom</label><input type="text" name="prenom" value="<?= $leMoniteur['prenom'] ?? '' ?>" required></div>
             <div class="input-group"><label>Tél</label><input type="text" name="tel" value="<?= $leMoniteur['tel'] ?? '' ?>"></div>
+            <div class="input-group full"><label>Adresse</label><input type="text" name="adresse" value="<?= isset($leMoniteur['adresse']) ? htmlspecialchars($leMoniteur['adresse']) : '' ?>"></div>
             <div class="input-group"><label>Expérience (ans)</label><input type="number" name="experience" value="<?= $leMoniteur['experience'] ?? '' ?>"></div>
             <div class="input-group">
                 <label>Permis</label>

@@ -1,23 +1,53 @@
 <div class="admin-container">
-    <h3 class="admin-title">Liste des Moniteurs</h3>
+    <h3 style="color:#ffcc00; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">
+        Gestion des Moniteurs
+    </h3>
+
     <table class="elite-table">
         <thead>
-            <tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Expérience</th><th>Permis</th><th>Actions</th></tr>
+            <tr>
+                <th>ID</th>
+                <th>NOM</th>
+                <th>PRÉNOM</th>
+                <th>TÉL</th>
+                <th>ACTIONS</th>
+            </tr>
         </thead>
+
         <tbody>
-            <?php foreach ($lesmoniteurs as $u) : ?>
+            <?php if (!empty($lesmoniteurs) && is_array($lesmoniteurs)): ?>
+                <?php foreach ($lesmoniteurs as $unMoniteur): ?>
+                    <tr>
+                        <td>
+                            <span class="badge">
+                                <?= $unMoniteur['idmoniteur'] ?>
+                            </span>
+                        </td>
+
+                        <td><?= htmlspecialchars($unMoniteur['nom']) ?></td>
+                        <td><?= htmlspecialchars($unMoniteur['prenom']) ?></td>
+                        <td><?= htmlspecialchars($unMoniteur['tel']) ?></td>
+
+                        <td style="text-align:center;">
+                            <a href="index.php?page=6&action=editMoniteur&idmoniteur=<?= $unMoniteur['idmoniteur'] ?>">
+                                <img src="image/modifier.png" height="20" title="Modifier">
+                            </a>
+
+                            <a href="index.php?page=6&action=supMoniteur&idmoniteur=<?= $unMoniteur['idmoniteur'] ?>"
+                               onclick="return confirm('Supprimer définitivement ?');"
+                               style="margin-left:15px;">
+                                <img src="image/supprimer.png" height="20" title="Supprimer">
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
                 <tr>
-                    <td><span class="badge"><?= $u['idmoniteur'] ?></span></td>
-                    <td><?= htmlspecialchars($u['nom']) ?></td>
-                    <td><?= htmlspecialchars($u['prenom']) ?></td>
-                    <td><?= $u['experience'] ?> ans</td>
-                    <td><span class="badge-permis"><?= $u['type_permis'] ?></span></td>
-                    <td class="actions">
-                        <a href="index.php?page=6&action=edit&idmoniteur=<?= $u['idmoniteur'] ?>"><img src="image/modifier.png" height="20"></a>
-                        <a href="index.php?page=6&action=sup&idmoniteur=<?= $u['idmoniteur'] ?>" onclick="return confirm('Supprimer ?');"><img src="image/supprimer.png" height="20"></a>
+                    <td colspan="5" style="text-align:center; color:#666; padding:30px;">
+                        Aucun moniteur enregistré dans la base de données.
                     </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>

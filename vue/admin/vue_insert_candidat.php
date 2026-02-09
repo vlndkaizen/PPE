@@ -51,7 +51,7 @@
             <?php else: ?>
                 <input type="submit" name="valider" value="Valider l'ajout" class="btn-primary">
             <?php endif; ?>
-            <input type="reset" value="Annuler" class="btn-secondary">
+            
         </div>
     </form>
 </div>

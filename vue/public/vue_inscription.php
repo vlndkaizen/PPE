@@ -1,41 +1,65 @@
-<div style="display: flex; justify-content: center; align-items: center; padding: 40px;">
-    <form action="" method="post" style="width: 100%; max-width: 500px; background: #1a1a1a; padding: 30px; border-radius: 8px;">
-        <h2 style="color: #ffcc00; text-align: center; margin-bottom: 25px; text-transform: uppercase;">Inscription Nouveau Candidat</h2>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <input type="text" name="nom" placeholder="Nom" required>
-            <input type="text" name="prenom" placeholder="Prénom" required>
-        </div>
-        
-        <input type="email" name="email" placeholder="Email (ex: jean@mail.com)" required>
-        <input type="text" name="tel" placeholder="Téléphone">
-        <input type="text" name="adresse" placeholder="Adresse complète">
-        
-        <div style="margin-top: 15px;">
-            <label style="color: #aaa; font-size: 0.9rem;">Êtes-vous étudiant ?</label>
-            <select name="est_etudiant">
-                <option value="non">Non</option>
-                <option value="oui">Oui</option>
-            </select>
-        </div>
+<div class="form-card" style="max-width: 700px; margin: 40px auto;">
+    <h1 class="section-title" style="text-align: center; border: none;">Inscription</h1>
+    <p style="text-align: center; color: var(--text-medium); margin-bottom: 30px;">
+        Rejoignez Castellane Auto et obtenez votre permis
+    </p>
 
-        <input type="text" name="nom_ecole" placeholder="Nom de l'école (si étudiant)">
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+    <form method="post" action="index.php?page=10">
+        <div class="form-grid">
             <div>
-                <label style="color: #aaa; font-size: 0.8rem;">Date Code prévue</label>
-                <input type="date" name="date_code">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Nom *</label>
+                <input type="text" name="nom" required placeholder="Votre nom">
             </div>
             <div>
-                <label style="color: #aaa; font-size: 0.8rem;">Date Permis prévue</label>
-                <input type="date" name="date_permis">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Prénom *</label>
+                <input type="text" name="prenom" required placeholder="Votre prénom">
             </div>
         </div>
 
-        <input type="submit" name="Sinscrire" value="REJOINDRE L'ÉCURIE" style="margin-top: 20px; background: #ffcc00; color: #000; font-weight: bold; border: none; padding: 15px; cursor: pointer;">
+        <div class="form-grid">
+            <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email *</label>
+                <input type="email" name="email" required placeholder="votre.email@exemple.fr">
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Téléphone *</label>
+                <input type="text" name="tel" required placeholder="06 12 34 56 78">
+            </div>
+        </div>
+
+        <div>
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Adresse complète *</label>
+            <input type="text" name="adresse" required placeholder="Numéro, rue, ville, code postal">
+        </div>
+
+        <div class="form-grid">
+            <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Êtes-vous étudiant ?</label>
+                <select name="est_etudiant">
+                    <option value="0">Non</option>
+                    <option value="1">Oui (réduction de 10%)</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Nom de votre école/université</label>
+                <input type="text" name="nom_ecole" placeholder="Si étudiant">
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px; background: var(--bg-light); border-left-color: var(--primary-blue);">
+            <p style="color: var(--text-medium); line-height: 1.8;">
+                <strong>Après votre inscription :</strong><br>
+                Notre équipe vous contactera sous 24h pour planifier votre évaluation de départ gratuite et vous présenter nos forfaits.
+            </p>
+        </div>
+
+        <input type="submit" name="Sinscrire" value="Valider mon inscription" style="margin-top: 30px;">
         
-        <p style="text-align: center; margin-top: 15px;">
-            <a href="index.php?page=4" style="color: #666; font-size: 0.8rem; text-decoration: none;">Déjà inscrit ? Connectez-vous ici.</a>
+        <p style="text-align: center; margin-top: 20px; color: var(--text-medium);">
+            Déjà inscrit ? 
+            <a href="index.php?page=99" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">
+                Accès administrateur
+            </a>
         </p>
     </form>
 </div>
