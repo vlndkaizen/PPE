@@ -14,6 +14,17 @@ class Controleur {
         return $this->unModele->verifConnexion(trim($email), $mdp);
     }
 
+    
+/* === CONNEXION CANDIDAT === */
+public function verifConnexionCandidat($email, $mdp) {
+    return $this->unModele->verifConnexionCandidat(trim($email), $mdp);
+}
+
+/* === PLANNING CANDIDAT === */
+public function selectCours_byCandidat($idcandidat) {
+    return $this->unModele->selectCours_byCandidat($idcandidat);
+}
+
     /* --- CANDIDATS --- */
     public function insert_candidat($tab) {
         $this->unModele->insert_candidat($tab);

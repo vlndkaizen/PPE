@@ -58,7 +58,7 @@
         <p style="text-align: center; margin-top: 20px; color: var(--text-medium);">
             Déjà inscrit ? 
             <a href="index.php?page=99" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">
-                Accès administrateur
+                Connectez vous
             </a>
         </p>
     </form>

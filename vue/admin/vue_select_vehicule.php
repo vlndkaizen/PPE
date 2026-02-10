@@ -26,11 +26,26 @@
                                 echo "<span style='color:$color'>● $statut</span>";
                             ?>
                         </td>
-                        <td class="actions">
-                            <a href="index.php?page=7&action=edit&idvehicule=<?php echo $unVehicule['idvehicule']; ?>">
-                                <img src="image/modifier.png" height="20">
+                        
+                           
+                             
+                        <td style="text-align:center;">
+                            <a href="index.php?page=7&action=editVehicule&idvehicule=<?= $unVehicule['idvehicule']; ?>">
+                            <img src="image/modifier.png" height="20" title="Modifier">
                             </a>
-                        </td>
+
+                        <a href="index.php?page=7&action=supVehicule&idvehicule=<?= $unVehicule['idvehicule']; ?>"
+                        onclick="return confirm('Supprimer définitivement ?');"
+                        style="margin-left:15px;">
+                         <img src="image/supprimer.png" height="20" title="Supprimer">
+                         </a>
+</td>
+
+                        
+                </td>
+                
+
+                        
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

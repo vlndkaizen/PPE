@@ -343,23 +343,78 @@ input[type="submit"]:hover {
     margin-bottom: 20px;
 }
 
-.answer-option {
+.quiz-container {
     background: var(--bg-white);
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border: 2px solid var(--border);
-    cursor: pointer;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.question-card {
+    background: var(--bg-light);
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border-left: 4px solid var(--primary-blue);
+}
+
+.question-number {
+    color: var(--accent-salmon);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.answer-option{
+  display: flex !important; 
+  align-items: flex-start;  /* radio en haut quand texte long */
+  gap: 10px;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .answer-option:hover {
     border-color: var(--primary-blue);
 }
+.answer-option input[type="radio"]{
+  margin-top: 3px; /* petit alignement visuel */
+  flex: 0 0 auto;
+}  
 
 .answer-option input[type="radio"] {
     width: auto;
     margin-right: 10px;
 }
+
+.score-display {
+    background: var(--primary-blue);
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.score-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 20px 0;
+}
+
+
+.answer-option:hover {
+    border-color: var(--primary-blue);
+}
+.answer-option input[type="radio"]{
+  margin-top: 3px; /* petit alignement visuel */
+  flex: 0 0 auto;
+}  
+
 
 .score-display {
     background: var(--primary-blue);
@@ -526,6 +581,8 @@ input[type="submit"]:hover {
   color: var(--text-medium);
 }
 
+
+
 /* === HERO ACCUEIL === */
 .hero{
   position: relative;
@@ -613,7 +670,7 @@ html { scroll-behavior: smooth; }
   background: url("image/hero.jpg") center / cover no-repeat;
 }
 
-/* ===== NAVBAR TOP FIXED ===== */
+/* ===== NAVBAR TOP ===== */
 .topbar{
   position: sticky;
   top: 0;
