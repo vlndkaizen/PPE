@@ -29,7 +29,6 @@
         <li><a href="index.php?page=1">Accueil</a></li>
         <li><a href="index.php?page=2">Nos Tarifs</a></li>
         <li><a href="index.php?page=3">Nos Véhicules</a></li>
-        <li><a href="index.php?page=4">Test Code</a></li>
         <li><a href="index.php?page=10">Inscription</a></li>
         <li><a href="index.php?page=99">Connexion</a></li>
       <?php endif; ?>

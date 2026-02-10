@@ -140,11 +140,6 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             });
             include("vue/public/flotte.php");
             break;
-
-        case 4: // Test Code
-            include("vue/public/test_code.php");
-            break;
-
         case 10: // Inscription
             include("vue/public/vue_inscription.php");
             break;

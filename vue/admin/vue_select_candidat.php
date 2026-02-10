@@ -1,5 +1,5 @@
 <div class="admin-container">
-    <h3 style="color:#ffcc00; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">
+    <h3  class ="admin-title"style="margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">
         Gestion des Candidats
     </h3>
     
