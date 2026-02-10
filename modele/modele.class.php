@@ -22,17 +22,17 @@ class Modele {
 
     /* --- GESTION CANDIDATS --- */
     public function insert_candidat($tab) {
-        $req = "INSERT INTO candidats VALUES (null, :nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, :date_prevue_code, :date_prevue_permis)";
+        $req = "INSERT INTO candidats VALUES (null, :nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole,null,null)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
             ":nom"=>$tab['nom'], ":prenom"=>$tab['prenom'], ":email"=>$tab['email'],
             ":tel"=>$tab['tel'], ":adresse"=>$tab['adresse'], ":est_etudiant"=>$tab['est_etudiant'],
-            ":nom_ecole"=>$tab['nom_ecole'], ":date_prevue_code"=>$tab['date_code'], ":date_prevue_permis"=>$tab['date_permis']
+            ":nom_ecole"=>$tab['nom_ecole']
         ));
     }
 
     public function selectAll_candidats() {
-        $req = "SELECT * FROM candidats ORDER BY nom ASC";
+        $req = "SELECT * FROM candidats";
         $select = $this->pdo->prepare($req); $select->execute();
         return $select->fetchAll();
     }
