@@ -741,10 +741,10 @@ html { scroll-behavior: smooth; }
 /* bouton inscription dans navbar */
 .nav-cta{
   background: var(--primary-blue);
-  color: white !important;
+  color: white ;
 }
 .nav-cta:hover{
-  background: #1E5A96 !important;
+  background: #1E5A96;
 }
 
 /* ===== HERO (gros titre avec image derrière) ===== */
@@ -810,4 +810,59 @@ html { scroll-behavior: smooth; }
   .nav-links{ flex-wrap: wrap; justify-content: flex-end; }
   .hero-content{ padding: 50px 22px; }
   .hero-content h1{ font-size: 2.3rem; }
+}
+.nav-links a.active {
+    color: var(--accent) !important;
+    font-weight: 700;
+    border-bottom: 3px solid var(--accent);
+}
+/* AJOUT: Style pour page active */
+.nav-links a.active {
+    color: var(--accent) !important;
+    font-weight: 700;
+    border-bottom: 3px solid var(--accent);
+}
+
+/* AJOUT: Bouton Connexion (fond bleu) */
+.btn-connexion {
+    background: #0F4C81 !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-connexion:hover {
+    background: #1E5A96 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(15, 76, 129, 0.3);
+}
+
+/* AJOUT: Bouton Inscription (bordure) */
+.btn-inscription {
+    background: transparent !important;
+    color: #FF8A65 !important;
+    border: 2px solid #FF8A65 !important;
+    padding: 10px 20px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-inscription:hover {
+    background: #FF8A65 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 138, 101, 0.3);
+}
+
+/* Déconnexion en rouge */
+.nav-logout {
+    color: #F44336 !important;
+    font-weight: 600 !important;
+}
+
+.nav-logout:hover {
+    color: #D32F2F !important;
 }

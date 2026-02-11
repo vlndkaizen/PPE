@@ -19,15 +19,22 @@ class Modele {
         return $select->fetch();
     }
 
-    /* === CONNEXION CANDIDAT === */
     public function verifConnexionCandidat($email, $mdp) {
-        $req = "SELECT * FROM candidats WHERE email = :email AND nom = :mdp";
+        $req = "SELECT * FROM candidats WHERE email = :email AND mdp = :mdp";
         $select = $this->pdo->prepare($req);
         $select->execute(array(":email" => $email, ":mdp" => $mdp));
         return $select->fetch();
     }
 
-    /* === PLANNING CANDIDAT === */
+    // AJOUT: Connexion moniteur
+    public function verifConnexionMoniteur($email, $mdp) {
+        $req = "SELECT * FROM moniteur WHERE email = :email AND mdp = :mdp";
+        $select = $this->pdo->prepare($req);
+        $select->execute(array(":email" => $email, ":mdp" => $mdp));
+        return $select->fetch();
+    }
+
+    /* --- PLANNING --- */
     public function selectCours_byCandidat($idcandidat) {
         $req = "SELECT c.*, 
                    CONCAT(m.nom, ' ', m.prenom) as nom_moniteur, 
@@ -43,7 +50,33 @@ class Modele {
         return $select->fetchAll();
     }
 
-    /* --- GESTION CANDIDATS --- */
+    // AJOUT: Planning moniteur
+    public function selectCours_byMoniteur($idmoniteur) {
+        $req = "SELECT c.*, 
+                   CONCAT(cand.nom, ' ', cand.prenom) as nom_candidat,
+                   cand.tel as tel_candidat,
+                   CONCAT(v.marque, ' ', v.modele) as modele_vehicule,
+                   v.immatriculation
+            FROM cours c 
+            INNER JOIN candidats cand ON c.idcandidat = cand.idcandidat 
+            INNER JOIN vehicule v ON c.idvehicule = v.idvehicule
+            WHERE c.idmoniteur = :idmoniteur
+            ORDER BY c.date_cours ASC, c.heure_debut ASC";
+        $select = $this->pdo->prepare($req);
+        $select->execute(array(":idmoniteur" => $idmoniteur));
+        return $select->fetchAll();
+    }
+
+    // AJOUT: Compter cours restants
+    public function countCoursRestants($idcandidat) {
+        $req = "SELECT COUNT(*) as nb FROM cours WHERE idcandidat = :idcandidat AND statut = 'À venir'";
+        $select = $this->pdo->prepare($req);
+        $select->execute(array(":idcandidat" => $idcandidat));
+        $result = $select->fetch();
+        return $result['nb'];
+    }
+
+    /* --- CANDIDATS --- */
     public function insert_candidat($tab) {
         $req = "INSERT INTO candidats VALUES (null, :nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, null, null)";
         $insert = $this->pdo->prepare($req);
@@ -95,13 +128,15 @@ class Modele {
         ));
     }
 
-    /* --- GESTION MONITEURS --- */
+    /* --- MONITEURS --- */
     public function insert_moniteur($tab) {
-        $req = "INSERT INTO moniteur VALUES (null, :nom, :prenom, :tel, :adresse, :experience, :type_permis)";
+        // MODIF: Ajout email
+        $req = "INSERT INTO moniteur VALUES (null, :nom, :prenom, :email, :tel, :adresse, :experience, :type_permis)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
             ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'], 
+            ":prenom" => $tab['prenom'],
+            ":email" => $tab['email'], 
             ":tel" => $tab['tel'], 
             ":adresse" => $tab['adresse'], 
             ":experience" => $tab['experience'], 
@@ -130,11 +165,13 @@ class Modele {
     }
 
     public function update_moniteur($tab) {
-        $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
+        // MODIF: Ajout email
+        $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
         $update = $this->pdo->prepare($req);
         $update->execute(array(
             ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'], 
+            ":prenom" => $tab['prenom'],
+            ":email" => $tab['email'], 
             ":tel" => $tab['tel'], 
             ":adresse" => $tab['adresse'], 
             ":experience" => $tab['experience'], 
@@ -143,7 +180,7 @@ class Modele {
         ));
     }
 
-    /* --- GESTION VEHICULES --- */
+    /* --- VEHICULES --- */
     public function insert_vehicule($tab) {
         $req = "INSERT INTO vehicule VALUES (null, :marque, :modele, :immatriculation, :etat)";
         $insert = $this->pdo->prepare($req);
@@ -187,9 +224,10 @@ class Modele {
         ));
     }
 
-    /* --- GESTION COURS --- */
+    /* --- COURS --- */
     public function insert_cours($tab) {
-        $req = "INSERT INTO cours VALUES (null, :date_cours, :heure_debut, :heure_fin, :idcandidat, :idmoniteur, :idvehicule)";
+        // MODIF: Statut par défaut 'À venir'
+        $req = "INSERT INTO cours VALUES (null, :date_cours, :heure_debut, :heure_fin, 'À venir', :idvehicule, :idmoniteur, :idcandidat)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
             ":date_cours" => $tab['date_cours'], 
@@ -203,7 +241,8 @@ class Modele {
 
     public function selectAll_cours() {
         $req = "SELECT c.*, cand.nom as nom_candidat, cand.prenom as prenom_candidat, 
-                       m.nom as nom_moniteur, v.modele as modele_vehicule 
+                       m.nom as nom_moniteur, m.prenom as prenom_moniteur, v.modele as modele_vehicule,
+                       v.immatriculation
                 FROM cours c 
                 INNER JOIN candidats cand ON c.idcandidat = cand.idcandidat 
                 INNER JOIN moniteur m ON c.idmoniteur = m.idmoniteur 
@@ -212,6 +251,37 @@ class Modele {
         $select = $this->pdo->prepare($req);
         $select->execute();
         return $select->fetchAll();
+    }
+
+    // AJOUT: Sélectionner un cours
+    public function selectWhere_cours($idcours) {
+        $req = "SELECT * FROM cours WHERE idcours = :idcours";
+        $select = $this->pdo->prepare($req);
+        $select->execute(array(":idcours" => $idcours));
+        return $select->fetch();
+    }
+
+    // AJOUT: Modifier un cours
+    public function update_cours($tab) {
+        $req = "UPDATE cours SET date_cours=:date_cours, heure_debut=:heure_debut, heure_fin=:heure_fin, statut=:statut, idcandidat=:idcandidat, idmoniteur=:idmoniteur, idvehicule=:idvehicule WHERE idcours=:idcours";
+        $update = $this->pdo->prepare($req);
+        $update->execute(array(
+            ":date_cours" => $tab['date_cours'],
+            ":heure_debut" => $tab['heure_debut'],
+            ":heure_fin" => $tab['heure_fin'],
+            ":statut" => $tab['statut'],
+            ":idcandidat" => $tab['idcandidat'],
+            ":idmoniteur" => $tab['idmoniteur'],
+            ":idvehicule" => $tab['idvehicule'],
+            ":idcours" => $tab['idcours']
+        ));
+    }
+
+    // AJOUT: Supprimer un cours
+    public function delete_cours($idcours) {
+        $req = "DELETE FROM cours WHERE idcours = :idcours";
+        $delete = $this->pdo->prepare($req);
+        $delete->execute(array(":idcours" => $idcours));
     }
 }
 ?>
