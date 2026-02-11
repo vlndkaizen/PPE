@@ -68,27 +68,3 @@ CREATE TABLE user (
 INSERT INTO user (nom, prenom, email, mdp, role) VALUES 
 ('Lejars', 'Murielle', 'admin@castellane.fr', '123', 'admin');
 
--- Véhicules
-INSERT INTO vehicule (marque, modele, immatriculation, etat) VALUES 
-('Toyota', 'Yaris', 'AA-123-BB', 'Disponible'),
-('Peugeot', '208', 'CC-456-DD', 'En réparation'),
-('Renault', 'Clio', 'EE-789-FF', 'Disponible');
-
--- CORRECTIF: Moniteurs avec mots de passe hachés
--- Mot de passe: "123" pour tous (pour les tests)
-INSERT INTO moniteur (nom, prenom, email, mdp, tel, experience, type_permis) VALUES
-('Dupont', 'Jean', 'dupont@castellane.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0601020304', 10, 'B'),
-('Martin', 'Sophie', 'martin@castellane.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0605060708', 5, 'B+A');
-
--- CORRECTIF: Candidats avec mots de passe hachés  
--- Mot de passe: "123" pour tous (pour les tests)
-INSERT INTO candidats (nom, prenom, email, mdp, tel, date_prevue_code) VALUES
-('Dieng', 'Mouhammad', 'dieng@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0601020304', '2026-03-15'),
-('Leroy', 'Emma', 'emma@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0612345678', '2026-04-01');
-
--- Cours
-INSERT INTO cours (date_cours, heure_debut, heure_fin, statut, idvehicule, idmoniteur, idcandidat) VALUES
-('2026-02-10', '09:00:00', '10:00:00', 'Effectué', 1, 1, 1),
-('2026-02-25', '14:00:00', '15:00:00', 'À venir', 1, 1, 1),
-('2026-02-28', '10:00:00', '11:00:00', 'À venir', 3, 2, 2),
-('2026-03-05', '15:00:00', '16:00:00', 'À venir', 1, 1, 1);
