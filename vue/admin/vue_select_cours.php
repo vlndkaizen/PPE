@@ -24,9 +24,9 @@
                         <td><?= htmlspecialchars($unCours['modele_vehicule']) ?> <span class="badge"><?= $unCours['immatriculation'] ?></span></td>
                         <td>
                             <?php if ($unCours['statut'] == 'Effectué'): ?>
-                                <span class="badge" style="background: #4CAF50; color: white;">✓ Effectué</span>
+                                <span class="badge" style="background: #7bb27d; color: white;">Effectué</span>
                             <?php else: ?>
-                                <span class="badge" style="background: #FF8A65; color: white;">⏳ À venir</span>
+                                <span class="badge" style="background: #e78a6d; color: white;">À venir</span>
                             <?php endif; ?>
                         </td>
                         <td style="text-align:center;">

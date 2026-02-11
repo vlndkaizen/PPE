@@ -14,6 +14,8 @@
                         <th>Moniteur</th>
                         <th>Véhicule</th>
                         <th>Immatriculation</th>
+                        <th>Statut</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -32,6 +34,13 @@
                                     <?= htmlspecialchars($cours['immatriculation']) ?>
                                 </span>
                             </td>
+                            <td>
+                            <?php if ($cours['statut'] == 'Effectué'): ?>
+                                <span class="badge" style="background: #7bb27d; color: white;">Effectué</span>
+                            <?php else: ?>
+                                <span class="badge" style="background: #e78a6d; color: white;">À venir</span>
+                            <?php endif; ?>
+                        </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
