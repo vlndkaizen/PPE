@@ -46,12 +46,23 @@
             </div>
         </div>
 
+        <div class="input-group">
+            <label>Mot de passe</label>
+            <input type="password" name="mdp" required minlength="3">
+        </div>
+
+        <div class="input-group">
+            <label>Confirmer le mot de passe</label>
+            <input type="password" name="mdp2" required minlength="3">
+        </div>
+
         <div class="card" style="margin-top: 30px; background: var(--bg-light); border-left-color: var(--primary-blue);">
             <p style="color: var(--text-medium); line-height: 1.8;">
                 <strong>Après votre inscription :</strong><br>
                 Notre équipe vous contactera sous 24h pour planifier votre évaluation de départ gratuite et vous présenter nos forfaits.
             </p>
         </div>
+
 
         <input type="submit" name="Sinscrire" value="Valider mon inscription" style="margin-top: 30px;">
         

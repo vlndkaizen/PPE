@@ -20,18 +20,27 @@ class Modele {
     }
 
     public function verifConnexionCandidat($email, $mdp) {
-        $req = "SELECT * FROM candidats WHERE email = :email AND mdp = :mdp";
+        $req = "SELECT * FROM candidats WHERE email = :email";
         $select = $this->pdo->prepare($req);
-        $select->execute(array(":email" => $email, ":mdp" => $mdp));
-        return $select->fetch();
+        $select->execute([":email" => $email]);
+        $candidat = $select->fetch();
+
+        if ($candidat && password_verify($mdp, $candidat['mdp'])) {
+            return $candidat;
+        }
+        return false;
     }
 
-    // AJOUT: Connexion moniteur
     public function verifConnexionMoniteur($email, $mdp) {
-        $req = "SELECT * FROM moniteur WHERE email = :email AND mdp = :mdp";
+        $req = "SELECT * FROM moniteur WHERE email = :email";
         $select = $this->pdo->prepare($req);
-        $select->execute(array(":email" => $email, ":mdp" => $mdp));
-        return $select->fetch();
+        $select->execute(array(":email" => $email));
+        $moniteur = $select->fetch();
+
+        if ($moniteur && password_verify($mdp, $moniteur['mdp'])) {
+            return $moniteur;
+        }
+        return false;
     }
 
     /* --- PLANNING --- */
@@ -50,7 +59,6 @@ class Modele {
         return $select->fetchAll();
     }
 
-    // AJOUT: Planning moniteur
     public function selectCours_byMoniteur($idmoniteur) {
         $req = "SELECT c.*, 
                    CONCAT(cand.nom, ' ', cand.prenom) as nom_candidat,
@@ -67,7 +75,6 @@ class Modele {
         return $select->fetchAll();
     }
 
-    // AJOUT: Compter cours restants
     public function countCoursRestants($idcandidat) {
         $req = "SELECT COUNT(*) as nb FROM cours WHERE idcandidat = :idcandidat AND statut = 'À venir'";
         $select = $this->pdo->prepare($req);
@@ -78,17 +85,24 @@ class Modele {
 
     /* --- CANDIDATS --- */
     public function insert_candidat($tab) {
-        $req = "INSERT INTO candidats VALUES (null, :nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, null, null)";
+        $req = "INSERT INTO candidats
+                (nom, prenom, email, tel, adresse, est_etudiant, nom_ecole, date_prevue_code, date_prevue_permis, mdp)
+                VALUES
+                (:nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, NULL, NULL, :mdp)";
         $insert = $this->pdo->prepare($req);
-        $insert->execute(array(
-            ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'], 
+
+        $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+
+        $insert->execute([
+            ":nom" => $tab['nom'],
+            ":prenom" => $tab['prenom'],
             ":email" => $tab['email'],
-            ":tel" => $tab['tel'], 
-            ":adresse" => $tab['adresse'], 
-            ":est_etudiant" => $tab['est_etudiant'],
-            ":nom_ecole" => $tab['nom_ecole']
-        ));
+            ":tel" => $tab['tel'] ?? null,
+            ":adresse" => $tab['adresse'] ?? null,
+            ":est_etudiant" => $tab['est_etudiant'] ?? 0,
+            ":nom_ecole" => $tab['nom_ecole'] ?? null,
+            ":mdp" => $mdp_hash
+        ]);
     }
 
     public function selectAll_candidats() {
@@ -111,32 +125,57 @@ class Modele {
         return $select->fetch();
     }
 
+    // CORRECTIF: Update candidat avec gestion mot de passe
     public function update_candidat($tab) {
-        $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
-        $update = $this->pdo->prepare($req);
-        $update->execute(array(
-            ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'], 
-            ":email" => $tab['email'], 
-            ":tel" => $tab['tel'], 
-            ":adresse" => $tab['adresse'], 
-            ":est_etudiant" => $tab['est_etudiant'], 
-            ":nom_ecole" => $tab['nom_ecole'], 
-            ":date_prevue_code" => $tab['date_code'], 
-            ":date_prevue_permis" => $tab['date_permis'], 
-            ":idcandidat" => $tab['idcandidat']
-        ));
+        // Si un nouveau mot de passe est fourni, on le hache et on met à jour
+        if (!empty($tab['mdp'])) {
+            $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+            $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, mdp=:mdp, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
+            $update = $this->pdo->prepare($req);
+            $update->execute(array(
+                ":nom" => $tab['nom'], 
+                ":prenom" => $tab['prenom'], 
+                ":email" => $tab['email'],
+                ":mdp" => $mdp_hash,
+                ":tel" => $tab['tel'], 
+                ":adresse" => $tab['adresse'], 
+                ":est_etudiant" => $tab['est_etudiant'], 
+                ":nom_ecole" => $tab['nom_ecole'], 
+                ":date_prevue_code" => $tab['date_code'], 
+                ":date_prevue_permis" => $tab['date_permis'], 
+                ":idcandidat" => $tab['idcandidat']
+            ));
+        } else {
+            // Sinon on ne touche pas au mot de passe
+            $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
+            $update = $this->pdo->prepare($req);
+            $update->execute(array(
+                ":nom" => $tab['nom'], 
+                ":prenom" => $tab['prenom'], 
+                ":email" => $tab['email'], 
+                ":tel" => $tab['tel'], 
+                ":adresse" => $tab['adresse'], 
+                ":est_etudiant" => $tab['est_etudiant'], 
+                ":nom_ecole" => $tab['nom_ecole'], 
+                ":date_prevue_code" => $tab['date_code'], 
+                ":date_prevue_permis" => $tab['date_permis'], 
+                ":idcandidat" => $tab['idcandidat']
+            ));
+        }
     }
 
     /* --- MONITEURS --- */
     public function insert_moniteur($tab) {
-        // MODIF: Ajout email
-        $req = "INSERT INTO moniteur VALUES (null, :nom, :prenom, :email, :tel, :adresse, :experience, :type_permis)";
+        $req = "INSERT INTO moniteur VALUES (null, :nom, :prenom, :email, :mdp, :tel, :adresse, :experience, :type_permis)";
         $insert = $this->pdo->prepare($req);
+        
+        $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+        
         $insert->execute(array(
             ":nom" => $tab['nom'], 
             ":prenom" => $tab['prenom'],
-            ":email" => $tab['email'], 
+            ":email" => $tab['email'],
+            ":mdp" => $mdp_hash,
             ":tel" => $tab['tel'], 
             ":adresse" => $tab['adresse'], 
             ":experience" => $tab['experience'], 
@@ -165,19 +204,35 @@ class Modele {
     }
 
     public function update_moniteur($tab) {
-        // MODIF: Ajout email
-        $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
-        $update = $this->pdo->prepare($req);
-        $update->execute(array(
-            ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'],
-            ":email" => $tab['email'], 
-            ":tel" => $tab['tel'], 
-            ":adresse" => $tab['adresse'], 
-            ":experience" => $tab['experience'], 
-            ":type_permis" => $tab['type_permis'], 
-            ":idmoniteur" => $tab['idmoniteur']
-        ));
+        if (!empty($tab['mdp'])) {
+            $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+            $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, mdp=:mdp, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
+            $update = $this->pdo->prepare($req);
+            $update->execute(array(
+                ":nom" => $tab['nom'], 
+                ":prenom" => $tab['prenom'],
+                ":email" => $tab['email'],
+                ":mdp" => $mdp_hash,
+                ":tel" => $tab['tel'], 
+                ":adresse" => $tab['adresse'], 
+                ":experience" => $tab['experience'], 
+                ":type_permis" => $tab['type_permis'], 
+                ":idmoniteur" => $tab['idmoniteur']
+            ));
+        } else {
+            $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
+            $update = $this->pdo->prepare($req);
+            $update->execute(array(
+                ":nom" => $tab['nom'], 
+                ":prenom" => $tab['prenom'],
+                ":email" => $tab['email'],
+                ":tel" => $tab['tel'], 
+                ":adresse" => $tab['adresse'], 
+                ":experience" => $tab['experience'], 
+                ":type_permis" => $tab['type_permis'], 
+                ":idmoniteur" => $tab['idmoniteur']
+            ));
+        }
     }
 
     /* --- VEHICULES --- */
@@ -226,7 +281,6 @@ class Modele {
 
     /* --- COURS --- */
     public function insert_cours($tab) {
-        // MODIF: Statut par défaut 'À venir'
         $req = "INSERT INTO cours VALUES (null, :date_cours, :heure_debut, :heure_fin, 'À venir', :idvehicule, :idmoniteur, :idcandidat)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
@@ -253,7 +307,6 @@ class Modele {
         return $select->fetchAll();
     }
 
-    // AJOUT: Sélectionner un cours
     public function selectWhere_cours($idcours) {
         $req = "SELECT * FROM cours WHERE idcours = :idcours";
         $select = $this->pdo->prepare($req);
@@ -261,7 +314,6 @@ class Modele {
         return $select->fetch();
     }
 
-    // AJOUT: Modifier un cours
     public function update_cours($tab) {
         $req = "UPDATE cours SET date_cours=:date_cours, heure_debut=:heure_debut, heure_fin=:heure_fin, statut=:statut, idcandidat=:idcandidat, idmoniteur=:idmoniteur, idvehicule=:idvehicule WHERE idcours=:idcours";
         $update = $this->pdo->prepare($req);
@@ -277,7 +329,6 @@ class Modele {
         ));
     }
 
-    // AJOUT: Supprimer un cours
     public function delete_cours($idcours) {
         $req = "DELETE FROM cours WHERE idcours = :idcours";
         $delete = $this->pdo->prepare($req);

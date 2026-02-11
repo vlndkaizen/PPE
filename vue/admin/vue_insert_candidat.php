@@ -1,3 +1,7 @@
+<?php
+function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
+?>
+
 <div class="form-card">
     <h3 class="admin-title"><?php echo (isset($leCandidat) && $leCandidat != null) ? "Modification" : "Ajout"; ?> d'un Candidat</h3>
     
@@ -13,15 +17,29 @@
             </div>
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" name="email" value="<?php echo ($leCandidat != null) ? htmlspecialchars($leCandidat['email']) : ''; ?>">
+                <input type="email" name="email" value="<?php echo ($leCandidat != null) ? htmlspecialchars($leCandidat['email']) : ''; ?>" required>
             </div>
             <div class="input-group">
                 <label>Téléphone</label>
                 <input type="text" name="tel" value="<?php echo ($leCandidat != null) ? htmlspecialchars($leCandidat['tel']) : ''; ?>">
             </div>
+            
+            <!-- AJOUT: Champ mot de passe -->
+            <?php if (!isset($leCandidat) || $leCandidat == null): ?>
+                <div class="input-group">
+                    <label>Mot de passe *</label>
+                    <input type="password" name="mdp" required minlength="3" placeholder="Mot de passe initial">
+                </div>
+            <?php else: ?>
+                <div class="input-group">
+                    <label>Nouveau mot de passe</label>
+                    <input type="password" name="mdp" minlength="3" placeholder="Laisser vide si inchangé">
+                </div>
+            <?php endif; ?>
+            
             <div class="input-group full">
                 <label>Adresse</label>
-                <input type="text" name="adresse" value="<?php echo ($leCandidat != null) ? htmlspecialchars($leCandidat['adresse']) : ''; ?>">
+                <input type="text" name="adresse" value="<?php echo ($leCandidat != null) ? h($leCandidat['adresse'] ?? '') : ''; ?>">
             </div>
             <div class="input-group">
                 <label>Étudiant ?</label>
@@ -32,7 +50,7 @@
             </div>
             <div class="input-group">
                 <label>École</label>
-                <input type="text" name="nom_ecole" value="<?php echo ($leCandidat != null) ? htmlspecialchars($leCandidat['nom_ecole']) : ''; ?>">
+                <input type="text" name="nom_ecole" value="<?php echo ($leCandidat != null) ? h($leCandidat['nom_ecole'] ?? '') : ''; ?>">
             </div>
             <div class="input-group">
                 <label>Date Prévue Code</label>
@@ -51,7 +69,6 @@
             <?php else: ?>
                 <input type="submit" name="valider" value="Valider l'ajout" class="btn-primary">
             <?php endif; ?>
-            
         </div>
     </form>
 </div>

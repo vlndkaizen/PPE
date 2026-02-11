@@ -48,9 +48,15 @@ if (isset($_POST['Connexion'])) {
 
 // === INSCRIPTION ===
 if (isset($_POST['Sinscrire'])) {
-    $unControleur->insert_candidat($_POST);
-    $message = '<div class="alert alert-success">Inscription réussie ! Nous vous contacterons sous 24h.</div>';
+    if (!isset($_POST['mdp'], $_POST['mdp2']) || $_POST['mdp'] !== $_POST['mdp2']) {
+        $message = '<div class="alert alert-error">Les mots de passe ne correspondent pas.</div>';
+    } else {
+        $unControleur->insert_candidat($_POST);
+        $message = '<div class="alert alert-success">Inscription réussie ! Nous vous contacterons sous 24h.</div>';
+    }
 }
+
+
 
 // === GESTION ADMIN ===
 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {

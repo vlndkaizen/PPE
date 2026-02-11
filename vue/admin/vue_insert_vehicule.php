@@ -1,3 +1,7 @@
+<?php
+function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
+?>
+
 <div class="form-card">
     <h3 class="admin-title"><?php echo ($leVehicule != null) ? "Modification" : "Ajout"; ?> Véhicule</h3>
 
