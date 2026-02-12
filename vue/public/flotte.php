@@ -1,36 +1,181 @@
-<section class="hero-flotte">
-    <div class="hero-flotte-overlay"></div>
-    <div class="hero-flotte-content">
-        <h1>Notre Flotte de Véhicules</h1>
-        <p>
-            Découvrez notre gamme complète de véhicules adaptés à tous vos besoins professionnels.
-            Des citadines compactes aux berlines spacieuses,
-            trouvez le véhicule idéal pour votre activité.
-        </p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Solutions pour les Voitures | Auto-école</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFDC00;
+            --dark: #000000;
+            --light: #FFFFFF;
+            --grey: #666666;
+            --light-grey: #F5F5F5;
+            --border-grey: #E0E0E0;
+            --accent: #FF6B00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Archivo', sans-serif;
+            background: var(--light) !important;
+            color: var(--dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            background: var(--light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("https://static.vecteezy.com/system/resources/previews/034/060/841/large_2x/inside-moden-car-background-luxury-car-interior-elements-wallpaper-black-leather-car-interior-photo.jpg");
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            padding: 2rem 4rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 { font-size: 70px; margin-bottom: 1.5rem; }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: var(--primary);
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            background: var(--accent);
+            box-shadow: 0 10px 30px rgba(255,220,0,0.3);
+        }
+
+        .vehicles-section { padding: 8rem 2rem; }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 22px;
+            color: var(--grey);
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .vehicle-card {
+            background: var(--light);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-grey);
+            transition: 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .vehicle-image { height: 250px; overflow: hidden; }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.6s;
+        }
+
+        .vehicle-card:hover img { transform: scale(1.1); }
+
+        .vehicle-info { padding: 2rem; }
+
+        .vehicle-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+        .vehicle-description { color: var(--grey); margin-bottom: 1.5rem; }
+
+        .vehicle-buttons { display: flex; gap: 1rem; }
+
+        .btn-primary {
+            flex: 1;
+            padding: 0.9rem 1.5rem;
+            background: var(--primary);
+            color: var(--dark);
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover { background: var(--accent); transform: translateX(5px); }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .vehicles-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Choisissez le véhicule idéal pour l'apprentissage de la conduite</h1>
+        <p>Découvrez notre gamme complète de véhicules adaptés à tous vos besoins professionnels.</p>
+        <a href="#vehicules" class="cta-button">Découvrir nos véhicules</a>
     </div>
 </section>
 
-  
+<section id="vehicules" class="vehicles-section">
 
-    <!-- AJOUT: Présentation de la flotte -->
-    <div class="card" style="margin-bottom: 40px; background: linear-gradient(135deg, #0F4C81 0%, #1E5A96 100%); color: white; padding: 30px;">
-        <h2 style="color: white; margin-bottom: 20px; font-size: 1.8rem;">Notre Engagement Qualité</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-            <div>
-                <h3 style="color: #FF8A65; font-size: 1.2rem; margin-bottom: 10px;">Véhicules Récents</h3>
-                <p style="line-height: 1.6;">Tous nos véhicules ont moins de 3 ans et sont équipés des dernières technologies de sécurité.</p>
-            </div>
-            <div>
-                <h3 style="color: #FF8A65; font-size: 1.2rem; margin-bottom: 10px;">Entretien Rigoureux</h3>
-                <p style="line-height: 1.6;">Révisions tous les 10 000 km par nos mécaniciens agréés. Contrôle technique à jour.</p>
-            </div>
-            <div>
-                <h3 style="color: #FF8A65; font-size: 1.2rem; margin-bottom: 10px;">Double Commande</h3>
-                <p style="line-height: 1.6;">Tous nos véhicules sont équipés de doubles commandes pour votre sécurité maximale.</p>
-            </div>
-        </div>
-    </div>
+    <h2 class="section-title">Notre Flotte</h2>
 
+    <div class="section-description">
+        <p>Des véhicules récents, confortables et sécurisés pour garantir un apprentissage optimal.</p>
     <div class="section" >
      <h2 class="section-title">Le véhicule idéal pour débuter la conduite</h2>
     <p style="color: var(--text-medium); font-size: 1.1rem; margin-bottom: 30px;">
@@ -94,49 +239,50 @@
         <?php endif; ?>
     </div>
 
-    <!-- AJOUT: Section informations complémentaires -->
-    <div class="card" style="margin-top: 40px; background: var(--bg-light); border-left-color: var(--accent-salmon);">
-        <h3>Entretien & Sécurité</h3>
-        <ul style="margin-top: 15px; padding-left: 20px; color: var(--text-medium); line-height: 2;">
-            <li><strong>Révision complète</strong> tous les 10 000 km</li>
-            <li><strong>Contrôle technique</strong> à jour et disponible sur demande</li>
-            <li><strong>Nettoyage intérieur/extérieur</strong> quotidien</li>
-            <li><strong>Assurance tous risques</strong> avec couverture complète</li>
-            <li><strong>Carburant</strong> fourni pour toutes les leçons</li>
-        </ul>
-     
+    <div class="vehicles-grid">
 
-    </div>
-
-   
- <div class="section no-border">
-
-    <div class="section" >
-  <h2 class="section-title">Le véhicule idéal pour débuter la conduite</h2>
-  <p style="color: var(--text-medium); font-size: 1.1rem; margin-bottom: 30px;">
-   Pour un apprentissage de la conduite sûr et efficace, il est essentiel de choisir le véhicule adapté. Des voitures fiables, modernes et faciles à prendre en main garantissent une expérience fluide pour les élèves, quel que soit leur niveau.
-Des modèles compacts aux citadines spacieuses, en boîte automatique ou manuelle, offrent une conduite intuitive, des technologies de sécurité avancées et un confort optimal pour les premiers kilomètres. Ces véhicules permettent aux élèves de se concentrer sur l'apprentissage, sans stress, et facilitent la progression rapide et sécurisée.
-Choisir le bon véhicule, c'est allier sécurité, confort et praticité, et offrir aux futurs conducteurs une expérience d'apprentissage agréable et professionnelle. Découvrez notre sélection de véhicules spécialement adaptés aux besoins des auto-écoles et commencez l'aventure de la conduite avec confiance.
-  </p>
-</div>
-
-    <div class="card" style="margin-top: 30px; background: var(--bg-light); border-left-color: var(--primary-blue);">
-        <h3>Nos Véhicules en Chiffres</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 20px; text-align: center;">
-            <div>
-                <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue);">
-                    <?= count($lesvehicules) ?>
+        <div class="vehicle-card">
+            <div class="vehicle-image">
+                <img src="https://www.automobile-magazine.fr/asset/cms/224961/config/172081/la-version-roland-garros-de-la-renault-5-e-tech-electric-sera-commercialise-en-2025.jpg" alt="Renault 5">
+            </div>
+            <div class="vehicle-info">
+                <h3 class="vehicle-name">Renault 5 E-Tech</h3>
+                <p class="vehicle-description">100% électrique, idéale pour l'apprentissage urbain.</p>
+                <div class="vehicle-buttons">
+                    <a href="#" class="btn-primary">Découvrir</a>
                 </div>
-                <p style="color: var(--text-medium); margin-top: 10px;">Véhicules disponibles</p>
-            </div>
-            <div>
-                <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue);">100%</div>
-                <p style="color: var(--text-medium); margin-top: 10px;">Équipés double commande</p>
-            </div>
-            <div>
-                <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue);">&lt;3</div>
-                <p style="color: var(--text-medium); margin-top: 10px;">Ans d'âge moyen</p>
             </div>
         </div>
+
+        <div class="vehicle-card">
+            <div class="vehicle-image">
+                <img src="https://www.electrichunter.com/sites/default/files/field/gallery/Renault-Clio-E-Tech-hybrid-2020-car-02-245.jpg" alt="Renault Clio">
+            </div>
+            <div class="vehicle-info">
+                <h3 class="vehicle-name">Renault Clio E-Tech</h3>
+                <p class="vehicle-description">Hybride, confortable et économique.</p>
+                <div class="vehicle-buttons">
+                    <a href="#" class="btn-primary">Découvrir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="vehicle-card">
+            <div class="vehicle-image">
+                <img src="https://rcesproductsimages-wired-prod-1-euw1.wrd-aws.com/pim/catalog/a/7/2/0/a720c5769809127e77f00fd8f93a58989ab0f646_1055387cfb4f75bacb932d031a8206aa2cbb47ef_redim_PIM_HHN_RFR00.jpg" alt="Renault Austral">
+            </div>
+            <div class="vehicle-info">
+                <h3 class="vehicle-name">Renault Austral</h3>
+                <p class="vehicle-description">SUV premium, espace et sécurité maximale.</p>
+                <div class="vehicle-buttons">
+                    <a href="#" class="btn-primary">Découvrir</a>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>
+
+</section>
+
+</body>
+</html>
