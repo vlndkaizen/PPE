@@ -95,21 +95,127 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
     }
 
     // Véhicules
-    if (isset($_POST['valider_vehicule'])) {
-        $unControleur->insert_vehicule($_POST);
-        header("Location: index.php?page=7");
-        exit();
+   if (isset($_POST['valider_vehicule'])) {
+
+    $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'vehicules' . DIRECTORY_SEPARATOR;
+
+    // créer le dossier si besoin
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
     }
+
+    $imageName = 'default-car.jpg';
+
+    if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+
+        if (in_array($ext, $allowedExt, true) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
+
+            $imageName = uniqid('veh_', true) . '.' . $ext;
+            $destPath = $uploadDir . $imageName;
+
+            // IMPORTANT : vérifier que le move marche
+            if (!move_uploaded_file($_FILES['image']['tmp_name'], $destPath)) {
+                // si ça échoue, on revient au défaut
+                $imageName = 'default-car.jpg';
+            }
+        }
+    }
+
+    $_POST['image'] = $imageName;
+    $unControleur->insert_vehicule($_POST);
+    header("Location: index.php?page=7");
+    exit();
+}
+
     if (isset($_POST['ModifierVehicule'])) {
-        $unControleur->update_vehicule($_POST);
-        header("Location: index.php?page=7");
-        exit();
+
+    $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'vehicules' . DIRECTORY_SEPARATOR;
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
     }
+
+    // récupérer l'ancien véhicule
+    $vehicule = $unControleur->selectWhere_vehicule($_POST['idvehicule']);
+    $imageName = $vehicule['image'] ?? 'default-car.jpg';
+
+    if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+
+        if (in_array($ext, $allowedExt, true) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
+
+            $newName = uniqid('veh_', true) . '.' . $ext;
+            $destPath = $uploadDir . $newName;
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $destPath)) {
+                $imageName = $newName; // on remplace seulement si move OK
+            }
+        }
+    }
+
+    $_POST['image'] = $imageName;
+    $unControleur->update_vehicule($_POST);
+    header("Location: index.php?page=7");
+    exit();
+}
+
     if (isset($_GET['action']) && $_GET['action'] == 'supVehicule' && isset($_GET['idvehicule'])) {
         $unControleur->delete_vehicule($_GET['idvehicule']);
         header("Location: index.php?page=7");
         exit();
     }
+        
+    // MODIF: Véhicules avec gestion upload image
+    if (isset($_POST['valider_vehicule'])) {
+        // Gestion de l'upload d'image
+        $imageName = 'default-car.jpg';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $filename = $_FILES['image']['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            
+            if (in_array($ext, $allowed) && $_FILES['image']['size'] <= 5000000) {
+                $imageName = uniqid() . '.' . $ext;
+                move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/vehicules/' . $imageName);
+            }
+        }
+        $_POST['image'] = $imageName;
+        $unControleur->insert_vehicule($_POST);
+        header("Location: index.php?page=7");
+        exit();
+    }
+
+    if (isset($_POST['ModifierVehicule'])) {
+        // Si une nouvelle image est uploadée
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $filename = $_FILES['image']['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            
+            if (in_array($ext, $allowed) && $_FILES['image']['size'] <= 5000000) {
+                $imageName = uniqid() . '.' . $ext;
+                move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/vehicules/' . $imageName);
+                $_POST['image'] = $imageName;
+            }
+        } else {
+            // Garder l'ancienne image si pas de nouvelle
+            $vehicule = $unControleur->selectWhere_vehicule($_POST['idvehicule']);
+            $_POST['image'] = $vehicule['image'];
+        }
+        $unControleur->update_vehicule($_POST);
+        header("Location: index.php?page=7");
+        exit();
+    }
+
+    if (isset($_GET['action']) && $_GET['action'] == 'supVehicule' && isset($_GET['idvehicule'])) {
+        $unControleur->delete_vehicule($_GET['idvehicule']);
+        header("Location: index.php?page=7");
+        exit();
+    }
+}
 
     // AJOUT: Cours
     if (isset($_POST['planifier'])) {
@@ -127,7 +233,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         header("Location: index.php?page=8");
         exit();
     }
-}
+
 
 // === DÉCONNEXION ===
 if (isset($_GET['page']) && $_GET['page'] == 9) {

@@ -7,7 +7,7 @@
     <?php foreach ($lesvehicules as $unVehicule) : ?>
     <div style="background: var(--card-grey); border-radius: 15px; overflow: hidden; border: 1px solid #333;">
         <div style="background: #000; height: 150px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-            🚗
+            
         </div>
         <div style="padding: 20px;">
             <h3 style="margin: 0; color: #fff;"><?= $unVehicule['marque'] . " " . $unVehicule['modele'] ?></h3>

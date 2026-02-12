@@ -236,13 +236,15 @@ class Modele {
     }
 
     /* --- VEHICULES --- */
+    // MODIF: Ajout du champ image
     public function insert_vehicule($tab) {
-        $req = "INSERT INTO vehicule VALUES (null, :marque, :modele, :immatriculation, :etat)";
+        $req = "INSERT INTO vehicule VALUES (null, :marque, :modele, :immatriculation, :image, :etat)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
             ":marque" => $tab['marque'], 
             ":modele" => $tab['modele'], 
-            ":immatriculation" => $tab['immatriculation'], 
+            ":immatriculation" => $tab['immatriculation'],
+            ":image" => $tab['image'] ?? 'default-car.jpg',
             ":etat" => $tab['etat']
         ));
     }
@@ -267,18 +269,19 @@ class Modele {
         return $select->fetch();
     }
 
+    // MODIF: Ajout du champ image
     public function update_vehicule($tab) {
-        $req = "UPDATE vehicule SET marque=:marque, modele=:modele, immatriculation=:immatriculation, etat=:etat WHERE idvehicule=:idvehicule";
+        $req = "UPDATE vehicule SET marque=:marque, modele=:modele, immatriculation=:immatriculation, image=:image, etat=:etat WHERE idvehicule=:idvehicule";
         $update = $this->pdo->prepare($req);
         $update->execute(array(
             ":marque" => $tab['marque'], 
             ":modele" => $tab['modele'], 
-            ":immatriculation" => $tab['immatriculation'], 
+            ":immatriculation" => $tab['immatriculation'],
+            ":image" => $tab['image'] ?? 'default-car.jpg',
             ":etat" => $tab['etat'], 
             ":idvehicule" => $tab['idvehicule']
         ));
     }
-
     /* --- COURS --- */
     public function insert_cours($tab) {
         $req = "INSERT INTO cours VALUES (null, :date_cours, :heure_debut, :heure_fin, 'À venir', :idvehicule, :idmoniteur, :idcandidat)";

@@ -35,6 +35,7 @@ CREATE TABLE vehicule (
     marque VARCHAR(25),
     modele VARCHAR(25),
     immatriculation VARCHAR(20),
+    image VARCHAR(255),
     etat VARCHAR(25) DEFAULT 'Disponible',
     CONSTRAINT pk_v PRIMARY KEY (idvehicule)
 );

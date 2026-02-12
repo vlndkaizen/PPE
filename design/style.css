@@ -869,3 +869,57 @@ html { scroll-behavior: smooth; }
 .nav-logout:hover {
     color: #D32F2F !important;
 }
+/* HERO FLOTTES */
+
+
+
+
+.hero-flotte {
+    position: relative;
+    height: 65vh;
+    min-height: 450px;
+    background: url('../image/hero-flotte.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+.hero-flotte{
+    margin-bottom: 60px;
+}
+
+.hero-flotte-overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(15,76,129,0.88),
+    rgba(15,76,129,0.55),
+    rgba(15,76,129,0.25)
+  );
+}
+
+/* Contenu au-dessus de l'overlay */
+.hero-flotte-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    padding: 20px;
+}
+
+.hero-flotte-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-flotte-content p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+}
+.no-border{
+    border-left: none !important;
+    margin-top: 80px;
+}
+
