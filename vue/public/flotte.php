@@ -31,6 +31,15 @@
         </div>
     </div>
 
+    <div class="section" >
+     <h2 class="section-title">Le véhicule idéal pour débuter la conduite</h2>
+    <p style="color: var(--text-medium); font-size: 1.1rem; margin-bottom: 30px;">
+   Pour un apprentissage de la conduite sûr et efficace, il est essentiel de choisir le véhicule adapté. Des voitures fiables, modernes et faciles à prendre en main garantissent une expérience fluide pour les élèves, quel que soit leur niveau.</p>
+    <p>Des modèles compacts aux citadines spacieuses, en boîte automatique ou manuelle, offrent une conduite intuitive, des technologies de sécurité avancées et un confort optimal pour les premiers kilomètres. Ces véhicules permettent aux élèves de se concentrer sur l'apprentissage, sans stress, et facilitent la progression rapide et sécurisée.</p><br>
+   <p> Choisir le bon véhicule, c'est allier sécurité, confort et praticité, et offrir aux futurs conducteurs une expérience d'apprentissage agréable et professionnelle. Découvrez notre sélection de véhicules spécialement adaptés aux besoins des auto-écoles et commencez l'aventure de la conduite avec confiance.</p>
+    </p>
+    </div>
+
     <div class="vehicle-grid">
         <?php if(!empty($lesvehicules) && is_array($lesvehicules)): ?>
             <?php foreach($lesvehicules as $vehicule): ?>

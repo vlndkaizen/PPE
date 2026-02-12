@@ -884,6 +884,9 @@ html { scroll-behavior: smooth; }
     justify-content: center;
     text-align: center;
     color: white;
+    border-radius: 25px;
+    overflow: hidden;
+    margin-bottom: 60px;
 }
 .hero-flotte{
     margin-bottom: 60px;
