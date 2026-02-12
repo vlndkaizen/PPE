@@ -176,6 +176,67 @@
 
     <div class="section-description">
         <p>Des véhicules récents, confortables et sécurisés pour garantir un apprentissage optimal.</p>
+    <div class="section" >
+     <h2 class="section-title">Le véhicule idéal pour débuter la conduite</h2>
+    <p style="color: var(--text-medium); font-size: 1.1rem; margin-bottom: 30px;">
+   Pour un apprentissage de la conduite sûr et efficace, il est essentiel de choisir le véhicule adapté. Des voitures fiables, modernes et faciles à prendre en main garantissent une expérience fluide pour les élèves, quel que soit leur niveau.</p>
+    <p>Des modèles compacts aux citadines spacieuses, en boîte automatique ou manuelle, offrent une conduite intuitive, des technologies de sécurité avancées et un confort optimal pour les premiers kilomètres. Ces véhicules permettent aux élèves de se concentrer sur l'apprentissage, sans stress, et facilitent la progression rapide et sécurisée.</p><br>
+   <p> Choisir le bon véhicule, c'est allier sécurité, confort et praticité, et offrir aux futurs conducteurs une expérience d'apprentissage agréable et professionnelle. Découvrez notre sélection de véhicules spécialement adaptés aux besoins des auto-écoles et commencez l'aventure de la conduite avec confiance.</p>
+    </p>
+    </div>
+
+    <div class="vehicle-grid">
+        <?php if(!empty($lesvehicules) && is_array($lesvehicules)): ?>
+            <?php foreach($lesvehicules as $vehicule): ?>
+                <div class="vehicle-card">
+                    <!-- AJOUT: Affichage de l'image -->
+                    <div class="vehicle-image" style="height: 200px; overflow: hidden; background: #f0f0f0;">
+                        <?php if (!empty($vehicule['image']) && file_exists(__DIR__ . '/../../uploads/vehicules/' . $vehicule['image'])
+): ?>
+                            <img src="uploads/vehicules/<?= $vehicule['image'] ?>" 
+                                 alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                        <?php else: ?>
+                            <!-- Image par défaut SVG -->
+                            <svg width="100%" height="100%" viewBox="0 0 200 200" style="background: #e0e0e0;">
+                                <rect x="40" y="80" width="120" height="60" fill="#0F4C81" rx="5"/>
+                                <circle cx="70" cy="150" r="15" fill="#333"/>
+                                <circle cx="130" cy="150" r="15" fill="#333"/>
+                                <rect x="50" y="70" width="100" height="30" fill="#1E5A96" rx="3"/>
+                                <text x="100" y="110" text-anchor="middle" fill="white" font-size="14" font-weight="bold">
+                                    <?= strtoupper(substr($vehicule['marque'], 0, 1)) ?>
+                                </text>
+                            </svg>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="vehicle-info">
+                        <h3><?= htmlspecialchars($vehicule['marque']) ?> <?= htmlspecialchars($vehicule['modele']) ?></h3>
+                        <div class="vehicle-plate"><?= htmlspecialchars($vehicule['immatriculation']) ?></div>
+                        <div style="margin-top: 15px;">
+                            <span class="badge badge-success">Disponible</span>
+                        </div>
+                        
+                        <!-- AJOUT: Informations supplémentaires -->
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="font-size: 0.9rem; color: #666; line-height: 1.6;">
+                                <strong style="color: #0F4C81;">Équipements :</strong><br>
+                                • Double commande<br>
+                                • Climatisation<br>
+                                • ABS & ESP<br>
+                                • Caméra de recul
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+                <p style="color: var(--text-medium); font-size: 1.1rem;">
+                    Nos véhicules sont actuellement en cours de maintenance.
+                </p>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="vehicles-grid">
