@@ -111,6 +111,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Castellane Auto - Auto-école Toulon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="design/style.css">
 </head>
 <body>
