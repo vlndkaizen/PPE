@@ -7,9 +7,60 @@ $message = '';
 $leCandidat = $leMoniteur = $leVehicule = $leCours = null;
 $lescandidats = $lesmoniteurs = $lesvehicules = $lescours = array();
 
+// === FONCTION DE VALIDATION ===
+function validerDonnees($data, $isInscription = false) {
+    $erreurs = [];
+    
+    // VALIDATION NOM/PRÉNOM : que des lettres, espaces, tirets
+    if (!empty($data['nom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['nom'])) {
+        $erreurs[] = "Le nom ne peut contenir que des lettres.";
+    }
+    if (!empty($data['prenom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['prenom'])) {
+        $erreurs[] = "Le prénom ne peut contenir que des lettres.";
+    }
+    
+    // VALIDATION EMAIL : format valide
+    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $erreurs[] = "L'email doit être valide (contenir @ et un domaine comme .fr, .com).";
+    }
+    
+    // VALIDATION TÉLÉPHONE : minimum 10 chiffres, que des chiffres
+    if (!empty($data['tel'])) {
+        $tel_propre = preg_replace('/[^0-9]/', '', $data['tel']); // Enlever espaces/tirets
+        if (strlen($tel_propre) < 10) {
+            $erreurs[] = "Le téléphone doit contenir au moins 10 chiffres.";
+        }
+        if (!preg_match("/^[0-9\s\-\+\(\)]+$/", $data['tel'])) {
+            $erreurs[] = "Le téléphone ne peut contenir que des chiffres, espaces, +, -, (, ).";
+        }
+    }
+    
+    // VALIDATION DATES : code ≠ permis
+    if (!empty($data['date_code']) && !empty($data['date_permis'])) {
+        if ($data['date_code'] === $data['date_permis']) {
+            $erreurs[] = "La date prévue du code ne peut pas être identique à celle du permis.";
+        }
+        // Date permis doit être après date code
+        if (strtotime($data['date_permis']) < strtotime($data['date_code'])) {
+            $erreurs[] = "La date du permis doit être postérieure à celle du code.";
+        }
+    }
+    
+    // VALIDATION MOT DE PASSE (inscription uniquement)
+    if ($isInscription) {
+        if (empty($data['mdp'])) {
+            $erreurs[] = "Le mot de passe est obligatoire.";
+        }
+        if (!empty($data['mdp']) && !empty($data['mdp2']) && $data['mdp'] !== $data['mdp2']) {
+            $erreurs[] = "Les mots de passe ne correspondent pas.";
+        }
+    }
+    
+    return $erreurs;
+}
+
 // === CONNEXION (ADMIN / CANDIDAT / MONITEUR) ===
 if (isset($_POST['Connexion'])) {
-    // Vérifier admin
     $user = $unControleur->verifConnexion($_POST['email'], $_POST['mdp']);
     if ($user) {
         $_SESSION['email'] = $user['email'];
@@ -19,7 +70,6 @@ if (isset($_POST['Connexion'])) {
         exit();
     }
     
-    // Vérifier candidat
     $candidat = $unControleur->verifConnexionCandidat($_POST['email'], $_POST['mdp']);
     if ($candidat) {
         $_SESSION['email'] = $candidat['email'];
@@ -27,11 +77,13 @@ if (isset($_POST['Connexion'])) {
         $_SESSION['prenom'] = $candidat['prenom'];
         $_SESSION['idcandidat'] = $candidat['idcandidat'];
         $_SESSION['role'] = 'candidat';
+        // AJOUT: Stocker les dates prévues en session
+        $_SESSION['date_prevue_code'] = $candidat['date_prevue_code'];
+        $_SESSION['date_prevue_permis'] = $candidat['date_prevue_permis'];
         header("Location: index.php?page=50");
         exit();
     }
     
-    // AJOUT: Vérifier moniteur
     $moniteur = $unControleur->verifConnexionMoniteur($_POST['email'], $_POST['mdp']);
     if ($moniteur) {
         $_SESSION['email'] = $moniteur['email'];
@@ -48,129 +100,102 @@ if (isset($_POST['Connexion'])) {
 
 // === INSCRIPTION ===
 if (isset($_POST['Sinscrire'])) {
-    if (!isset($_POST['mdp'], $_POST['mdp2']) || $_POST['mdp'] !== $_POST['mdp2']) {
-        $message = '<div class="alert alert-error">Les mots de passe ne correspondent pas.</div>';
+    $erreurs = validerDonnees($_POST, true);
+    
+    if (empty($erreurs)) {
+        // Vérifier si l'email existe déjà
+        try {
+            $unControleur->insert_candidat($_POST);
+            $message = '<div class="alert alert-success">✅ Inscription réussie ! Nous vous contacterons sous 24h.</div>';
+        } catch (Exception $e) {
+            if (strpos($e->getMessage(), 'Duplicate entry') !== false || strpos($e->getMessage(), '1062') !== false) {
+                $message = '<div class="alert alert-error">❌ Cet email est déjà utilisé. Veuillez en choisir un autre.</div>';
+            } else {
+                $message = '<div class="alert alert-error">❌ Erreur lors de l\'inscription. Veuillez réessayer.</div>';
+            }
+        }
     } else {
-        $unControleur->insert_candidat($_POST);
-        $message = '<div class="alert alert-success">Inscription réussie ! Nous vous contacterons sous 24h.</div>';
+        $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
     }
 }
 
-
-
 // === GESTION ADMIN ===
 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
-    // Candidats
-    if (isset($_POST['valider'])) { 
-        $unControleur->insert_candidat($_POST);
-        header("Location: index.php?page=5");
-        exit();
+    
+    // CANDIDATS
+    if (isset($_POST['valider'])) {
+        $erreurs = validerDonnees($_POST);
+        if (empty($erreurs)) {
+            try {
+                $unControleur->insert_candidat($_POST);
+                header("Location: index.php?page=5");
+                exit();
+            } catch (Exception $e) {
+                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                    $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
+                } else {
+                    $message = '<div class="alert alert-error">❌ Erreur lors de l\'ajout.</div>';
+                }
+            }
+        } else {
+            $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
+        }
     }
-    if (isset($_POST['Modifier'])) { 
-        $unControleur->update_candidat($_POST);
-        header("Location: index.php?page=5");
-        exit();
+    
+    if (isset($_POST['Modifier'])) {
+        $erreurs = validerDonnees($_POST);
+        if (empty($erreurs)) {
+            $unControleur->update_candidat($_POST);
+            header("Location: index.php?page=5");
+            exit();
+        } else {
+            $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
+        }
     }
+    
     if (isset($_GET['action']) && $_GET['action'] == 'sup' && isset($_GET['idcandidat'])) {
         $unControleur->delete_candidat($_GET['idcandidat']);
         header("Location: index.php?page=5");
         exit();
     }
 
-    // Moniteurs
+    // MONITEURS
     if (isset($_POST['valider_moniteur'])) {
-        $unControleur->insert_moniteur($_POST);
-        header("Location: index.php?page=6");
-        exit();
+        $erreurs = validerDonnees($_POST);
+        if (empty($erreurs)) {
+            try {
+                $unControleur->insert_moniteur($_POST);
+                header("Location: index.php?page=6");
+                exit();
+            } catch (Exception $e) {
+                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                    $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
+                }
+            }
+        } else {
+            $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
+        }
     }
+    
     if (isset($_POST['ModifierMoniteur'])) {
-        $unControleur->update_moniteur($_POST);
-        header("Location: index.php?page=6");
-        exit();
+        $erreurs = validerDonnees($_POST);
+        if (empty($erreurs)) {
+            $unControleur->update_moniteur($_POST);
+            header("Location: index.php?page=6");
+            exit();
+        } else {
+            $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
+        }
     }
+    
     if (isset($_GET['action']) && $_GET['action'] == 'supMoniteur' && isset($_GET['idmoniteur'])) {
         $unControleur->delete_moniteur($_GET['idmoniteur']);
         header("Location: index.php?page=6");
         exit();
     }
 
-    // Véhicules
-   if (isset($_POST['valider_vehicule'])) {
-
-    $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'vehicules' . DIRECTORY_SEPARATOR;
-
-    // créer le dossier si besoin
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
-    $imageName = 'default-car.jpg';
-
-    if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-
-        if (in_array($ext, $allowedExt, true) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
-
-            $imageName = uniqid('veh_', true) . '.' . $ext;
-            $destPath = $uploadDir . $imageName;
-
-            // IMPORTANT : vérifier que le move marche
-            if (!move_uploaded_file($_FILES['image']['tmp_name'], $destPath)) {
-                // si ça échoue, on revient au défaut
-                $imageName = 'default-car.jpg';
-            }
-        }
-    }
-
-    $_POST['image'] = $imageName;
-    $unControleur->insert_vehicule($_POST);
-    header("Location: index.php?page=7");
-    exit();
-}
-
-    if (isset($_POST['ModifierVehicule'])) {
-
-    $uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'vehicules' . DIRECTORY_SEPARATOR;
-
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
-    // récupérer l'ancien véhicule
-    $vehicule = $unControleur->selectWhere_vehicule($_POST['idvehicule']);
-    $imageName = $vehicule['image'] ?? 'default-car.jpg';
-
-    if (!empty($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
-        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-
-        if (in_array($ext, $allowedExt, true) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
-
-            $newName = uniqid('veh_', true) . '.' . $ext;
-            $destPath = $uploadDir . $newName;
-
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $destPath)) {
-                $imageName = $newName; // on remplace seulement si move OK
-            }
-        }
-    }
-
-    $_POST['image'] = $imageName;
-    $unControleur->update_vehicule($_POST);
-    header("Location: index.php?page=7");
-    exit();
-}
-
-    if (isset($_GET['action']) && $_GET['action'] == 'supVehicule' && isset($_GET['idvehicule'])) {
-        $unControleur->delete_vehicule($_GET['idvehicule']);
-        header("Location: index.php?page=7");
-        exit();
-    }
-        
-    // MODIF: Véhicules avec gestion upload image
+    // VÉHICULES
     if (isset($_POST['valider_vehicule'])) {
-        // Gestion de l'upload d'image
         $imageName = 'default-car.jpg';
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'webp'];
@@ -179,6 +204,9 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
             
             if (in_array($ext, $allowed) && $_FILES['image']['size'] <= 5000000) {
                 $imageName = uniqid() . '.' . $ext;
+                if (!is_dir('uploads/vehicules')) {
+                    mkdir('uploads/vehicules', 0777, true);
+                }
                 move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/vehicules/' . $imageName);
             }
         }
@@ -187,9 +215,8 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         header("Location: index.php?page=7");
         exit();
     }
-
+    
     if (isset($_POST['ModifierVehicule'])) {
-        // Si une nouvelle image est uploadée
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'webp'];
             $filename = $_FILES['image']['name'];
@@ -197,11 +224,13 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
             
             if (in_array($ext, $allowed) && $_FILES['image']['size'] <= 5000000) {
                 $imageName = uniqid() . '.' . $ext;
+                if (!is_dir('uploads/vehicules')) {
+                    mkdir('uploads/vehicules', 0777, true);
+                }
                 move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/vehicules/' . $imageName);
                 $_POST['image'] = $imageName;
             }
         } else {
-            // Garder l'ancienne image si pas de nouvelle
             $vehicule = $unControleur->selectWhere_vehicule($_POST['idvehicule']);
             $_POST['image'] = $vehicule['image'];
         }
@@ -209,15 +238,14 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         header("Location: index.php?page=7");
         exit();
     }
-
+    
     if (isset($_GET['action']) && $_GET['action'] == 'supVehicule' && isset($_GET['idvehicule'])) {
         $unControleur->delete_vehicule($_GET['idvehicule']);
         header("Location: index.php?page=7");
         exit();
     }
-}
 
-    // AJOUT: Cours
+    // COURS
     if (isset($_POST['planifier'])) {
         $unControleur->insert_cours($_POST);
         header("Location: index.php?page=8");
@@ -233,7 +261,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         header("Location: index.php?page=8");
         exit();
     }
-
+}
 
 // === DÉCONNEXION ===
 if (isset($_GET['page']) && $_GET['page'] == 9) {
@@ -253,6 +281,19 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
 <body>
 
 <?php include("vue/entete.php"); ?>
+
+<!-- AJOUT: Affichage dates candidat sur toutes ses pages -->
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat'): ?>
+    <div style="background: linear-gradient(135deg, #1E5A96 0%, #1E5A96 100%); color: white; padding: 15px 20px; text-align: center; font-weight: 600;">
+        Dates prévues : 
+        <span style="margin: 0 20px;">
+            Code : <?= !empty($_SESSION['date_prevue_code']) ? date('d/m/Y', strtotime($_SESSION['date_prevue_code'])) : 'Non définie' ?>
+        </span>
+        <span>
+            Permis : <?= !empty($_SESSION['date_prevue_permis']) ? date('d/m/Y', strtotime($_SESSION['date_prevue_permis'])) : 'Non définie' ?>
+        </span>
+    </div>
+<?php endif; ?>
 
 <main>
     <?php if($message) echo $message; ?>
@@ -277,8 +318,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
         case 22: include("vue/public/permis_moto.php"); break;
         case 99: include("vue/vue_connexion.php"); break;
 
-        // PAGES CANDIDAT
-        case 50: // Planning candidat
+        case 50:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat') {
                 $lescours = $unControleur->selectCours_byCandidat($_SESSION['idcandidat']);
                 $nbRestants = $unControleur->countCoursRestants($_SESSION['idcandidat']);
@@ -289,8 +329,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             }
             break;
 
-        // AJOUT: PAGES MONITEUR
-        case 60: // Planning moniteur
+        case 60:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'moniteur') {
                 $lescours = $unControleur->selectCours_byMoniteur($_SESSION['idmoniteur']);
                 include("vue/admin/vue_planning_moniteur.php");
@@ -300,8 +339,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             }
             break;
 
-        // PAGES ADMIN
-        case 5: // Candidats
+        case 5:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
                 if (isset($_GET['action']) && $_GET['action'] == 'edit') {
                     $leCandidat = $unControleur->selectWhere_candidat($_GET['idcandidat']);
@@ -315,7 +353,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             }
             break;
 
-        case 6: // Moniteurs
+        case 6:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
                 if (isset($_GET['action']) && $_GET['action'] == 'editMoniteur') {
                     $leMoniteur = $unControleur->selectWhere_moniteur($_GET['idmoniteur']);
@@ -329,7 +367,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             }
             break;
 
-        case 7: // Véhicules
+        case 7:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
                 if (isset($_GET['action']) && $_GET['action'] == 'editVehicule') {
                     $leVehicule = $unControleur->selectWhere_vehicule($_GET['idvehicule']);
@@ -343,7 +381,7 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             }
             break;
 
-        case 8: // AJOUT: Planning/Cours admin (CRUD complet)
+        case 8:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
                 if (isset($_GET['action']) && $_GET['action'] == 'editCours') {
                     $leCours = $unControleur->selectWhere_cours($_GET['idcours']);
@@ -364,6 +402,8 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
     }
     ?>
 </main>
+
+<?php include("vue/public/footer.php"); ?>
 
 </body>
 </html>

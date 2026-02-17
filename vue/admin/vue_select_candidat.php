@@ -21,6 +21,7 @@
                         <td><?= htmlspecialchars($unCandidat['nom']) ?></td>
                         <td><?= htmlspecialchars($unCandidat['prenom']) ?></td>
                         <td><?= htmlspecialchars($unCandidat['email']) ?></td>
+                        <td><?= htmlspecialchars($unCandidat['tel']) ?></td>
                         <td style="text-align:center;">
                             <a href="index.php?page=5&action=edit&idcandidat=<?= $unCandidat['idcandidat'] ?>">
                                 <img src="image/modifier.png" height="20" title="Modifier">
