@@ -16,6 +16,7 @@
       <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat'): ?>
         <!-- MENU CANDIDAT -->
         <li><a href="index.php?page=1" class="<?= ($currentPage == 1) ? 'active' : '' ?>">Accueil</a></li>
+        <li><a href="index.php?page=3" class="<?= ($currentPage == 3) ? 'active' : '' ?>">Nos Véhicules</a></li>
         <li><a href="index.php?page=50" class="<?= ($currentPage == 50) ? 'active' : '' ?>">Mon Planning</a></li>
         <li><a href="index.php?page=4" class="<?= ($currentPage == 4) ? 'active' : '' ?>">Test Code</a></li>
         <li><a href="index.php?page=9" class="nav-logout">Déconnexion</a></li>
