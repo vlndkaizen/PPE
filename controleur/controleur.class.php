@@ -57,6 +57,9 @@
         public function update_candidat($tab) {
             $this->unModele->update_candidat($tab);
         }
+        public function changerMotDePassePremierConnexion($idcandidat, $nouveau_mdp) {
+        $this->unModele->changerMotDePassePremierConnexion($idcandidat, $nouveau_mdp);
+        }
 
         /* --- MONITEURS --- */
         public function insert_moniteur($tab){

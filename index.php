@@ -10,33 +10,18 @@ $lescandidats = $lesmoniteurs = $lesvehicules = $lescours = array();
 // === FONCTION DE VALIDATION ===
 function validerDonnees($data, $isInscription = false) {
     $erreurs = [];
-
-    // VALIDATION NOM : lettres uniquement, min 2 caractères
-    if (!empty($data['nom'])) {
-        $nom = trim($data['nom']);
-        if (strlen($nom) < 2) {
-            $erreurs[] = "Le nom doit contenir au moins 2 caractères.";
-        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $nom)) {
-            $erreurs[] = "Le nom ne peut contenir que des lettres.";
-        }
+    
+    if (!empty($data['nom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['nom'])) {
+        $erreurs[] = "Le nom ne peut contenir que des lettres.";
     }
-
-    // VALIDATION PRÉNOM : lettres uniquement, min 2 caractères
-    if (!empty($data['prenom'])) {
-        $prenom = trim($data['prenom']);
-        if (strlen($prenom) < 2) {
-            $erreurs[] = "Le prénom doit contenir au moins 2 caractères.";
-        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $prenom)) {
-            $erreurs[] = "Le prénom ne peut contenir que des lettres.";
-        }
+    if (!empty($data['prenom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['prenom'])) {
+        $erreurs[] = "Le prénom ne peut contenir que des lettres.";
     }
-
-    // VALIDATION EMAIL : format valide
-    if (!empty($data['email']) && !filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL)) {
+    
+    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         $erreurs[] = "L'email doit être valide (contenir @ et un domaine comme .fr, .com).";
     }
-
-    // VALIDATION TÉLÉPHONE : minimum 10 chiffres
+    
     if (!empty($data['tel'])) {
         $tel_propre = preg_replace('/[^0-9]/', '', $data['tel']);
         if (strlen($tel_propre) < 10) {
@@ -46,8 +31,7 @@ function validerDonnees($data, $isInscription = false) {
             $erreurs[] = "Le téléphone ne peut contenir que des chiffres, espaces, +, -, (, ).";
         }
     }
-
-    // VALIDATION DATES : code ≠ permis
+    
     if (!empty($data['date_code']) && !empty($data['date_permis'])) {
         if ($data['date_code'] === $data['date_permis']) {
             $erreurs[] = "La date prévue du code ne peut pas être identique à celle du permis.";
@@ -56,34 +40,36 @@ function validerDonnees($data, $isInscription = false) {
             $erreurs[] = "La date du permis doit être postérieure à celle du code.";
         }
     }
-
-    // VALIDATION MOT DE PASSE (inscription uniquement)
+    
     if ($isInscription) {
         if (empty($data['mdp'])) {
             $erreurs[] = "Le mot de passe est obligatoire.";
-        } else {
-            if (strlen($data['mdp']) < 8) {
-                $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
-            }
-            if (preg_match('/\s/', $data['mdp'])) {
-                $erreurs[] = "Le mot de passe ne peut pas contenir d'espaces.";
-            }
-            if (!preg_match('/[A-Z]/', $data['mdp'])) {
-                $erreurs[] = "Le mot de passe doit contenir au moins une majuscule.";
-            }
-            if (!preg_match('/[0-9]/', $data['mdp'])) {
-                $erreurs[] = "Le mot de passe doit contenir au moins un chiffre.";
-            }
         }
         if (!empty($data['mdp']) && !empty($data['mdp2']) && $data['mdp'] !== $data['mdp2']) {
             $erreurs[] = "Les mots de passe ne correspondent pas.";
         }
     }
-
+    
     return $erreurs;
 }
 
-// === CONNEXION (ADMIN / CANDIDAT / MONITEUR) ===
+// === CHANGEMENT DE MOT DE PASSE PREMIÈRE CONNEXION ===
+if (isset($_POST['changer_mdp_premier'])) {
+    if ($_POST['nouveau_mdp'] !== $_POST['nouveau_mdp2']) {
+        $message = '<div class="alert alert-error">❌ Les mots de passe ne correspondent pas.</div>';
+    } elseif (strlen($_POST['nouveau_mdp']) < 5) {
+        $message = '<div class="alert alert-error">❌ Le mot de passe doit contenir au moins 5 caractères.</div>';
+    } else {
+        // Mise à jour du mot de passe + premier_connexion = 0
+        $unControleur->changerMotDePassePremierConnexion($_SESSION['idcandidat'], $_POST['nouveau_mdp']);
+        $_SESSION['premier_connexion'] = 0;
+        $message = '<div class="alert alert-success">✅ Mot de passe modifié avec succès !</div>';
+        header("Location: index.php?page=50");
+        exit();
+    }
+}
+
+// === CONNEXION ===
 if (isset($_POST['Connexion'])) {
     $user = $unControleur->verifConnexion($_POST['email'], $_POST['mdp']);
     if ($user) {
@@ -101,9 +87,17 @@ if (isset($_POST['Connexion'])) {
         $_SESSION['prenom'] = $candidat['prenom'];
         $_SESSION['idcandidat'] = $candidat['idcandidat'];
         $_SESSION['role'] = 'candidat';
-        // AJOUT: Stocker les dates prévues en session
         $_SESSION['date_prevue_code'] = $candidat['date_prevue_code'];
         $_SESSION['date_prevue_permis'] = $candidat['date_prevue_permis'];
+        // AJOUT: Stocker si première connexion
+        $_SESSION['premier_connexion'] = $candidat['premier_connexion'];
+        
+        // AJOUT: Redirection vers changement MDP si première connexion
+        if ($candidat['premier_connexion'] == 1) {
+            header("Location: index.php?page=52"); // Page changement MDP
+            exit();
+        }
+        
         header("Location: index.php?page=50");
         exit();
     }
@@ -124,20 +118,19 @@ if (isset($_POST['Connexion'])) {
 
 // === INSCRIPTION ===
 if (isset($_POST['Sinscrire'])) {
-    $postData = array_map(function($val) {
-        return is_string($val) ? trim($val) : $val;
-    }, $_POST);
-    $erreurs = validerDonnees($postData, true);
-
+    $erreurs = validerDonnees($_POST, true);
+    
     if (empty($erreurs)) {
         try {
-            $unControleur->insert_candidat($postData);
+            // MODIF: Inscription par candidat = premier_connexion à 0
+            $_POST['premier_connexion'] = 0;
+            $unControleur->insert_candidat($_POST);
             $message = '<div class="alert alert-success">✅ Inscription réussie ! Nous vous contacterons sous 24h.</div>';
         } catch (Exception $e) {
             if (strpos($e->getMessage(), 'Duplicate entry') !== false || strpos($e->getMessage(), '1062') !== false) {
-                $message = '<div class="alert alert-error">❌ Cet email est déjà utilisé. Veuillez en choisir un autre.</div>';
+                $message = '<div class="alert alert-error">❌ Cet email est déjà utilisé.</div>';
             } else {
-                $message = '<div class="alert alert-error">❌ Erreur lors de l\'inscription. Veuillez réessayer.</div>';
+                $message = '<div class="alert alert-error">❌ Erreur lors de l\'inscription.</div>';
             }
         }
     } else {
@@ -148,20 +141,17 @@ if (isset($_POST['Sinscrire'])) {
 // === GESTION ADMIN ===
 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
     
-    // CANDIDATS
     if (isset($_POST['valider'])) {
         $erreurs = validerDonnees($_POST);
         if (empty($erreurs)) {
             try {
+                // AJOUT: Admin ajoute candidat = premier_connexion à 1
+                $_POST['premier_connexion'] = 1;
                 $unControleur->insert_candidat($_POST);
                 header("Location: index.php?page=5");
                 exit();
             } catch (Exception $e) {
-                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                    $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
-                } else {
-                    $message = '<div class="alert alert-error">❌ Erreur lors de l\'ajout.</div>';
-                }
+                $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
             }
         } else {
             $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
@@ -185,7 +175,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         exit();
     }
 
-    // MONITEURS
     if (isset($_POST['valider_moniteur'])) {
         $erreurs = validerDonnees($_POST);
         if (empty($erreurs)) {
@@ -194,9 +183,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
                 header("Location: index.php?page=6");
                 exit();
             } catch (Exception $e) {
-                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
-                    $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
-                }
+                $message = '<div class="alert alert-error">❌ Cet email existe déjà.</div>';
             }
         } else {
             $message = '<div class="alert alert-error">❌ ' . implode('<br>', $erreurs) . '</div>';
@@ -220,7 +207,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         exit();
     }
 
-    // VÉHICULES
     if (isset($_POST['valider_vehicule'])) {
         $imageName = 'default-car.jpg';
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
@@ -271,7 +257,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
         exit();
     }
 
-    // COURS
     if (isset($_POST['planifier'])) {
         $unControleur->insert_cours($_POST);
         header("Location: index.php?page=8");
@@ -289,7 +274,6 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
     }
 }
 
-// === DÉCONNEXION ===
 if (isset($_GET['page']) && $_GET['page'] == 9) {
     session_destroy();
     header("Location: index.php");
@@ -308,9 +292,8 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
 
 <?php include("vue/entete.php"); ?>
 
-<!-- AJOUT: Affichage dates candidat sur toutes ses pages -->
-<?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat'): ?>
-    <div style="background: linear-gradient(135deg, #1E5A96 0%, #1E5A96 100%); color: white; padding: 15px 20px; text-align: center; font-weight: 600;">
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat' && $_SESSION['premier_connexion'] == 0): ?>
+    <div style="background: linear-gradient(135deg, #0F4C81 0%, #0F4C81 100%); color: white; padding: 15px 20px; text-align: center; font-weight: 600;">
         Dates prévues : 
         <span style="margin: 0 20px;">
             Code : <?= !empty($_SESSION['date_prevue_code']) ? date('d/m/Y', strtotime($_SESSION['date_prevue_code'])) : 'Non définie' ?>
@@ -339,18 +322,45 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
             break;
         case 4: include("vue/public/test_code.php"); break;
         case 10: include("vue/public/vue_inscription.php"); break;
-        case 20: include("vue/public/permis_b.php"); break;
-        case 21: include("vue/public/permis_aac.php"); break;
-        case 22: include("vue/public/permis_moto.php"); break;
         case 99: include("vue/vue_connexion.php"); break;
 
         case 50:
             if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat') {
+                // AJOUT: Bloquer si première connexion non terminée
+                if ($_SESSION['premier_connexion'] == 1) {
+                    header("Location: index.php?page=52");
+                    exit();
+                }
                 $lescours = $unControleur->selectCours_byCandidat($_SESSION['idcandidat']);
                 $nbRestants = $unControleur->countCoursRestants($_SESSION['idcandidat']);
                 include("vue/admin/vue_planning_candidat.php");
             } else {
                 header("Location: index.php?page=99");
+                exit();
+            }
+            break;
+
+        case 51:
+            if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat') {
+                // AJOUT: Bloquer si première connexion
+                if ($_SESSION['premier_connexion'] == 1) {
+                    header("Location: index.php?page=52");
+                    exit();
+                }
+                $lesvehicules = $unControleur->selectAll_vehicules();
+                include("vue/candidat/vue_vehicules_candidat.php");
+            } else {
+                header("Location: index.php?page=99");
+                exit();
+            }
+            break;
+
+        // AJOUT: Page changement mot de passe première connexion
+        case 52:
+            if (isset($_SESSION['role']) && $_SESSION['role'] == 'candidat' && $_SESSION['premier_connexion'] == 1) {
+                include("vue/candidat/changement_mdp_premier.php");
+            } else {
+                header("Location: index.php?page=50");
                 exit();
             }
             break;
@@ -429,7 +439,11 @@ if (isset($_GET['page']) && $_GET['page'] == 9) {
     ?>
 </main>
 
-<?php include("vue/public/footer.php"); ?>
+<?php 
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    include("vue/public/footer.php");
+}
+?>
 
 </body>
 </html>

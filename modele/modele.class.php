@@ -84,11 +84,12 @@ class Modele {
     }
 
     /* --- CANDIDATS --- */
+    // MODIF: Ajout premier_connexion
     public function insert_candidat($tab) {
         $req = "INSERT INTO candidats
-                (nom, prenom, email, tel, adresse, est_etudiant, nom_ecole, date_prevue_code, date_prevue_permis, mdp)
+                (nom, prenom, email, tel, adresse, est_etudiant, nom_ecole, date_prevue_code, date_prevue_permis, mdp, premier_connexion)
                 VALUES
-                (:nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, NULL, NULL, :mdp)";
+                (:nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, NULL, NULL, :mdp, :premier_connexion)";
         $insert = $this->pdo->prepare($req);
 
         $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
@@ -101,7 +102,8 @@ class Modele {
             ":adresse" => $tab['adresse'] ?? null,
             ":est_etudiant" => $tab['est_etudiant'] ?? 0,
             ":nom_ecole" => $tab['nom_ecole'] ?? null,
-            ":mdp" => $mdp_hash
+            ":mdp" => $mdp_hash,
+            ":premier_connexion" => $tab['premier_connexion'] ?? 1
         ]);
     }
 
@@ -125,9 +127,7 @@ class Modele {
         return $select->fetch();
     }
 
-    // CORRECTIF: Update candidat avec gestion mot de passe
     public function update_candidat($tab) {
-        // Si un nouveau mot de passe est fourni, on le hache et on met à jour
         if (!empty($tab['mdp'])) {
             $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
             $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, mdp=:mdp, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
@@ -146,7 +146,6 @@ class Modele {
                 ":idcandidat" => $tab['idcandidat']
             ));
         } else {
-            // Sinon on ne touche pas au mot de passe
             $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
             $update = $this->pdo->prepare($req);
             $update->execute(array(
@@ -162,6 +161,17 @@ class Modele {
                 ":idcandidat" => $tab['idcandidat']
             ));
         }
+    }
+
+    // AJOUT: Changement mot de passe première connexion
+    public function changerMotDePassePremierConnexion($idcandidat, $nouveau_mdp) {
+        $mdp_hash = password_hash($nouveau_mdp, PASSWORD_DEFAULT);
+        $req = "UPDATE candidats SET mdp = :mdp, premier_connexion = 0 WHERE idcandidat = :idcandidat";
+        $update = $this->pdo->prepare($req);
+        $update->execute([
+            ":mdp" => $mdp_hash,
+            ":idcandidat" => $idcandidat
+        ]);
     }
 
     /* --- MONITEURS --- */
@@ -236,7 +246,6 @@ class Modele {
     }
 
     /* --- VEHICULES --- */
-    // MODIF: Ajout du champ image
     public function insert_vehicule($tab) {
         $req = "INSERT INTO vehicule VALUES (null, :marque, :modele, :immatriculation, :image, :etat)";
         $insert = $this->pdo->prepare($req);
@@ -269,7 +278,6 @@ class Modele {
         return $select->fetch();
     }
 
-    // MODIF: Ajout du champ image
     public function update_vehicule($tab) {
         $req = "UPDATE vehicule SET marque=:marque, modele=:modele, immatriculation=:immatriculation, image=:image, etat=:etat WHERE idvehicule=:idvehicule";
         $update = $this->pdo->prepare($req);
@@ -282,6 +290,7 @@ class Modele {
             ":idvehicule" => $tab['idvehicule']
         ));
     }
+
     /* --- COURS --- */
     public function insert_cours($tab) {
         $req = "INSERT INTO cours VALUES (null, :date_cours, :heure_debut, :heure_fin, 'À venir', :idvehicule, :idmoniteur, :idcandidat)";
