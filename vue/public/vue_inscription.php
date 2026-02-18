@@ -8,28 +8,28 @@
         <div class="form-grid">
             <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">Nom *</label>
-                <input type="text" name="nom" required placeholder="Votre nom">
+                <input type="text" name="nom" required placeholder="Votre nom" minlength="2" maxlength="50" pattern="[a-zA-ZÀ-ÿ\s\-']+" title="Lettres uniquement (min. 2 caractères)">
             </div>
             <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">Prénom *</label>
-                <input type="text" name="prenom" required placeholder="Votre prénom">
+                <input type="text" name="prenom" required placeholder="Votre prénom" minlength="2" maxlength="50" pattern="[a-zA-ZÀ-ÿ\s\-']+" title="Lettres uniquement (min. 2 caractères)">
             </div>
         </div>
 
         <div class="form-grid">
             <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email *</label>
-                <input type="email" name="email" required placeholder="votre.email@exemple.fr">
+                <input type="email" name="email" required placeholder="votre.email@exemple.fr" maxlength="100">
             </div>
             <div>
                 <label style="display: block; margin-bottom: 8px; font-weight: 500;">Téléphone *</label>
-                <input type="text" name="tel" required placeholder="06 12 34 56 78">
+                <input type="tel" name="tel" required placeholder="06 12 34 56 78" pattern="[0-9\s\-\+\(\)]+" minlength="10" maxlength="20" title="Numéro de téléphone valide (ex: 06 12 34 56 78)">
             </div>
         </div>
 
         <div>
             <label style="display: block; margin-bottom: 8px; font-weight: 500;">Adresse complète *</label>
-            <input type="text" name="adresse" required placeholder="Numéro, rue, ville, code postal">
+            <input type="text" name="adresse" required placeholder="Numéro, rue, ville, code postal" minlength="5" maxlength="150">
         </div>
 
         <div class="form-grid">
@@ -47,13 +47,16 @@
         </div>
 
         <div class="input-group">
-            <label>Mot de passe</label>
-            <input type="password" name="mdp" required minlength="3">
+            <label>Mot de passe *</label>
+            <input type="password" name="mdp" required minlength="8" maxlength="100" placeholder="Minimum 8 caractères">
+            <small style="color: var(--text-medium); display: block; margin-top: 5px;">
+                Au moins 8 caractères, une majuscule, un chiffre, sans espaces.
+            </small>
         </div>
 
         <div class="input-group">
-            <label>Confirmer le mot de passe</label>
-            <input type="password" name="mdp2" required minlength="3">
+            <label>Confirmer le mot de passe *</label>
+            <input type="password" name="mdp2" required minlength="8" maxlength="100" placeholder="Répétez votre mot de passe">
         </div>
 
         <div class="card" style="margin-top: 30px; background: var(--bg-light); border-left-color: var(--primary-blue);">

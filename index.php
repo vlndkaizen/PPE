@@ -10,23 +10,35 @@ $lescandidats = $lesmoniteurs = $lesvehicules = $lescours = array();
 // === FONCTION DE VALIDATION ===
 function validerDonnees($data, $isInscription = false) {
     $erreurs = [];
-    
-    // VALIDATION NOM/PRÉNOM : que des lettres, espaces, tirets
-    if (!empty($data['nom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['nom'])) {
-        $erreurs[] = "Le nom ne peut contenir que des lettres.";
+
+    // VALIDATION NOM : lettres uniquement, min 2 caractères
+    if (!empty($data['nom'])) {
+        $nom = trim($data['nom']);
+        if (strlen($nom) < 2) {
+            $erreurs[] = "Le nom doit contenir au moins 2 caractères.";
+        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $nom)) {
+            $erreurs[] = "Le nom ne peut contenir que des lettres.";
+        }
     }
-    if (!empty($data['prenom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['prenom'])) {
-        $erreurs[] = "Le prénom ne peut contenir que des lettres.";
+
+    // VALIDATION PRÉNOM : lettres uniquement, min 2 caractères
+    if (!empty($data['prenom'])) {
+        $prenom = trim($data['prenom']);
+        if (strlen($prenom) < 2) {
+            $erreurs[] = "Le prénom doit contenir au moins 2 caractères.";
+        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $prenom)) {
+            $erreurs[] = "Le prénom ne peut contenir que des lettres.";
+        }
     }
-    
+
     // VALIDATION EMAIL : format valide
-    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!empty($data['email']) && !filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL)) {
         $erreurs[] = "L'email doit être valide (contenir @ et un domaine comme .fr, .com).";
     }
-    
-    // VALIDATION TÉLÉPHONE : minimum 10 chiffres, que des chiffres
+
+    // VALIDATION TÉLÉPHONE : minimum 10 chiffres
     if (!empty($data['tel'])) {
-        $tel_propre = preg_replace('/[^0-9]/', '', $data['tel']); // Enlever espaces/tirets
+        $tel_propre = preg_replace('/[^0-9]/', '', $data['tel']);
         if (strlen($tel_propre) < 10) {
             $erreurs[] = "Le téléphone doit contenir au moins 10 chiffres.";
         }
@@ -34,28 +46,40 @@ function validerDonnees($data, $isInscription = false) {
             $erreurs[] = "Le téléphone ne peut contenir que des chiffres, espaces, +, -, (, ).";
         }
     }
-    
+
     // VALIDATION DATES : code ≠ permis
     if (!empty($data['date_code']) && !empty($data['date_permis'])) {
         if ($data['date_code'] === $data['date_permis']) {
             $erreurs[] = "La date prévue du code ne peut pas être identique à celle du permis.";
         }
-        // Date permis doit être après date code
         if (strtotime($data['date_permis']) < strtotime($data['date_code'])) {
             $erreurs[] = "La date du permis doit être postérieure à celle du code.";
         }
     }
-    
+
     // VALIDATION MOT DE PASSE (inscription uniquement)
     if ($isInscription) {
         if (empty($data['mdp'])) {
             $erreurs[] = "Le mot de passe est obligatoire.";
+        } else {
+            if (strlen($data['mdp']) < 8) {
+                $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
+            }
+            if (preg_match('/\s/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe ne peut pas contenir d'espaces.";
+            }
+            if (!preg_match('/[A-Z]/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe doit contenir au moins une majuscule.";
+            }
+            if (!preg_match('/[0-9]/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe doit contenir au moins un chiffre.";
+            }
         }
         if (!empty($data['mdp']) && !empty($data['mdp2']) && $data['mdp'] !== $data['mdp2']) {
             $erreurs[] = "Les mots de passe ne correspondent pas.";
         }
     }
-    
+
     return $erreurs;
 }
 
@@ -100,12 +124,14 @@ if (isset($_POST['Connexion'])) {
 
 // === INSCRIPTION ===
 if (isset($_POST['Sinscrire'])) {
-    $erreurs = validerDonnees($_POST, true);
-    
+    $postData = array_map(function($val) {
+        return is_string($val) ? trim($val) : $val;
+    }, $_POST);
+    $erreurs = validerDonnees($postData, true);
+
     if (empty($erreurs)) {
-        // Vérifier si l'email existe déjà
         try {
-            $unControleur->insert_candidat($_POST);
+            $unControleur->insert_candidat($postData);
             $message = '<div class="alert alert-success">✅ Inscription réussie ! Nous vous contacterons sous 24h.</div>';
         } catch (Exception $e) {
             if (strpos($e->getMessage(), 'Duplicate entry') !== false || strpos($e->getMessage(), '1062') !== false) {
