@@ -15,17 +15,17 @@ class Modele {
     public function verifConnexion($email, $mdp) {
         $req = "SELECT * FROM user WHERE email = :email AND mdp = :mdp";
         $select = $this->pdo->prepare($req);
-        $select->execute(array(":email" => $email, ":mdp" => $mdp));
+        $select->execute(array(":email" => trim($email), ":mdp" => trim($mdp)));
         return $select->fetch();
     }
 
     public function verifConnexionCandidat($email, $mdp) {
         $req = "SELECT * FROM candidats WHERE email = :email";
         $select = $this->pdo->prepare($req);
-        $select->execute([":email" => $email]);
+        $select->execute([":email" => trim($email)]);
         $candidat = $select->fetch();
 
-        if ($candidat && password_verify($mdp, $candidat['mdp'])) {
+        if ($candidat && password_verify(trim($mdp), $candidat['mdp'])) {
             return $candidat;
         }
         return false;
@@ -34,10 +34,10 @@ class Modele {
     public function verifConnexionMoniteur($email, $mdp) {
         $req = "SELECT * FROM moniteur WHERE email = :email";
         $select = $this->pdo->prepare($req);
-        $select->execute(array(":email" => $email));
+        $select->execute(array(":email" => trim($email)));
         $moniteur = $select->fetch();
 
-        if ($moniteur && password_verify($mdp, $moniteur['mdp'])) {
+        if ($moniteur && password_verify(trim($mdp), $moniteur['mdp'])) {
             return $moniteur;
         }
         return false;
@@ -84,7 +84,6 @@ class Modele {
     }
 
     /* --- CANDIDATS --- */
-    // MODIF: Ajout premier_connexion
     public function insert_candidat($tab) {
         $req = "INSERT INTO candidats
                 (nom, prenom, email, tel, adresse, est_etudiant, nom_ecole, date_prevue_code, date_prevue_permis, mdp, premier_connexion)
@@ -92,16 +91,17 @@ class Modele {
                 (:nom, :prenom, :email, :tel, :adresse, :est_etudiant, :nom_ecole, NULL, NULL, :mdp, :premier_connexion)";
         $insert = $this->pdo->prepare($req);
 
-        $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+        // AJOUT: trim() pour enlever les espaces
+        $mdp_hash = password_hash(trim($tab['mdp']), PASSWORD_DEFAULT);
 
         $insert->execute([
-            ":nom" => $tab['nom'],
-            ":prenom" => $tab['prenom'],
-            ":email" => $tab['email'],
-            ":tel" => $tab['tel'] ?? null,
-            ":adresse" => $tab['adresse'] ?? null,
+            ":nom" => trim($tab['nom']),
+            ":prenom" => trim($tab['prenom']),
+            ":email" => trim($tab['email']),
+            ":tel" => isset($tab['tel']) ? trim($tab['tel']) : null,
+            ":adresse" => isset($tab['adresse']) ? trim($tab['adresse']) : null,
             ":est_etudiant" => $tab['est_etudiant'] ?? 0,
-            ":nom_ecole" => $tab['nom_ecole'] ?? null,
+            ":nom_ecole" => isset($tab['nom_ecole']) ? trim($tab['nom_ecole']) : null,
             ":mdp" => $mdp_hash,
             ":premier_connexion" => $tab['premier_connexion'] ?? 1
         ]);
@@ -129,18 +129,19 @@ class Modele {
 
     public function update_candidat($tab) {
         if (!empty($tab['mdp'])) {
-            $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+            // AJOUT: trim()
+            $mdp_hash = password_hash(trim($tab['mdp']), PASSWORD_DEFAULT);
             $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, mdp=:mdp, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
             $update = $this->pdo->prepare($req);
             $update->execute(array(
-                ":nom" => $tab['nom'], 
-                ":prenom" => $tab['prenom'], 
-                ":email" => $tab['email'],
+                ":nom" => trim($tab['nom']), 
+                ":prenom" => trim($tab['prenom']), 
+                ":email" => trim($tab['email']),
                 ":mdp" => $mdp_hash,
-                ":tel" => $tab['tel'], 
-                ":adresse" => $tab['adresse'], 
+                ":tel" => trim($tab['tel']), 
+                ":adresse" => trim($tab['adresse']), 
                 ":est_etudiant" => $tab['est_etudiant'], 
-                ":nom_ecole" => $tab['nom_ecole'], 
+                ":nom_ecole" => trim($tab['nom_ecole']), 
                 ":date_prevue_code" => $tab['date_code'], 
                 ":date_prevue_permis" => $tab['date_permis'], 
                 ":idcandidat" => $tab['idcandidat']
@@ -149,13 +150,13 @@ class Modele {
             $req = "UPDATE candidats SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, est_etudiant=:est_etudiant, nom_ecole=:nom_ecole, date_prevue_code=:date_prevue_code, date_prevue_permis=:date_prevue_permis WHERE idcandidat=:idcandidat";
             $update = $this->pdo->prepare($req);
             $update->execute(array(
-                ":nom" => $tab['nom'], 
-                ":prenom" => $tab['prenom'], 
-                ":email" => $tab['email'], 
-                ":tel" => $tab['tel'], 
-                ":adresse" => $tab['adresse'], 
+                ":nom" => trim($tab['nom']), 
+                ":prenom" => trim($tab['prenom']), 
+                ":email" => trim($tab['email']), 
+                ":tel" => trim($tab['tel']), 
+                ":adresse" => trim($tab['adresse']), 
                 ":est_etudiant" => $tab['est_etudiant'], 
-                ":nom_ecole" => $tab['nom_ecole'], 
+                ":nom_ecole" => trim($tab['nom_ecole']), 
                 ":date_prevue_code" => $tab['date_code'], 
                 ":date_prevue_permis" => $tab['date_permis'], 
                 ":idcandidat" => $tab['idcandidat']
@@ -163,9 +164,9 @@ class Modele {
         }
     }
 
-    // AJOUT: Changement mot de passe première connexion
     public function changerMotDePassePremierConnexion($idcandidat, $nouveau_mdp) {
-        $mdp_hash = password_hash($nouveau_mdp, PASSWORD_DEFAULT);
+        // AJOUT: trim()
+        $mdp_hash = password_hash(trim($nouveau_mdp), PASSWORD_DEFAULT);
         $req = "UPDATE candidats SET mdp = :mdp, premier_connexion = 0 WHERE idcandidat = :idcandidat";
         $update = $this->pdo->prepare($req);
         $update->execute([
@@ -179,17 +180,18 @@ class Modele {
         $req = "INSERT INTO moniteur VALUES (null, :nom, :prenom, :email, :mdp, :tel, :adresse, :experience, :type_permis)";
         $insert = $this->pdo->prepare($req);
         
-        $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+        // AJOUT: trim()
+        $mdp_hash = password_hash(trim($tab['mdp']), PASSWORD_DEFAULT);
         
         $insert->execute(array(
-            ":nom" => $tab['nom'], 
-            ":prenom" => $tab['prenom'],
-            ":email" => $tab['email'],
+            ":nom" => trim($tab['nom']), 
+            ":prenom" => trim($tab['prenom']),
+            ":email" => trim($tab['email']),
             ":mdp" => $mdp_hash,
-            ":tel" => $tab['tel'], 
-            ":adresse" => $tab['adresse'], 
+            ":tel" => trim($tab['tel']), 
+            ":adresse" => trim($tab['adresse']), 
             ":experience" => $tab['experience'], 
-            ":type_permis" => $tab['type_permis']
+            ":type_permis" => trim($tab['type_permis'])
         ));
     }
 
@@ -215,31 +217,32 @@ class Modele {
 
     public function update_moniteur($tab) {
         if (!empty($tab['mdp'])) {
-            $mdp_hash = password_hash($tab['mdp'], PASSWORD_DEFAULT);
+            // AJOUT: trim()
+            $mdp_hash = password_hash(trim($tab['mdp']), PASSWORD_DEFAULT);
             $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, mdp=:mdp, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
             $update = $this->pdo->prepare($req);
             $update->execute(array(
-                ":nom" => $tab['nom'], 
-                ":prenom" => $tab['prenom'],
-                ":email" => $tab['email'],
+                ":nom" => trim($tab['nom']), 
+                ":prenom" => trim($tab['prenom']),
+                ":email" => trim($tab['email']),
                 ":mdp" => $mdp_hash,
-                ":tel" => $tab['tel'], 
-                ":adresse" => $tab['adresse'], 
+                ":tel" => trim($tab['tel']), 
+                ":adresse" => trim($tab['adresse']), 
                 ":experience" => $tab['experience'], 
-                ":type_permis" => $tab['type_permis'], 
+                ":type_permis" => trim($tab['type_permis']), 
                 ":idmoniteur" => $tab['idmoniteur']
             ));
         } else {
             $req = "UPDATE moniteur SET nom=:nom, prenom=:prenom, email=:email, tel=:tel, adresse=:adresse, experience=:experience, type_permis=:type_permis WHERE idmoniteur=:idmoniteur";
             $update = $this->pdo->prepare($req);
             $update->execute(array(
-                ":nom" => $tab['nom'], 
-                ":prenom" => $tab['prenom'],
-                ":email" => $tab['email'],
-                ":tel" => $tab['tel'], 
-                ":adresse" => $tab['adresse'], 
+                ":nom" => trim($tab['nom']), 
+                ":prenom" => trim($tab['prenom']),
+                ":email" => trim($tab['email']),
+                ":tel" => trim($tab['tel']), 
+                ":adresse" => trim($tab['adresse']), 
                 ":experience" => $tab['experience'], 
-                ":type_permis" => $tab['type_permis'], 
+                ":type_permis" => trim($tab['type_permis']), 
                 ":idmoniteur" => $tab['idmoniteur']
             ));
         }
@@ -250,11 +253,11 @@ class Modele {
         $req = "INSERT INTO vehicule VALUES (null, :marque, :modele, :immatriculation, :image, :etat)";
         $insert = $this->pdo->prepare($req);
         $insert->execute(array(
-            ":marque" => $tab['marque'], 
-            ":modele" => $tab['modele'], 
-            ":immatriculation" => $tab['immatriculation'],
+            ":marque" => trim($tab['marque']), 
+            ":modele" => trim($tab['modele']), 
+            ":immatriculation" => trim($tab['immatriculation']),
             ":image" => $tab['image'] ?? 'default-car.jpg',
-            ":etat" => $tab['etat']
+            ":etat" => trim($tab['etat'])
         ));
     }
 
@@ -282,11 +285,11 @@ class Modele {
         $req = "UPDATE vehicule SET marque=:marque, modele=:modele, immatriculation=:immatriculation, image=:image, etat=:etat WHERE idvehicule=:idvehicule";
         $update = $this->pdo->prepare($req);
         $update->execute(array(
-            ":marque" => $tab['marque'], 
-            ":modele" => $tab['modele'], 
-            ":immatriculation" => $tab['immatriculation'],
+            ":marque" => trim($tab['marque']), 
+            ":modele" => trim($tab['modele']), 
+            ":immatriculation" => trim($tab['immatriculation']),
             ":image" => $tab['image'] ?? 'default-car.jpg',
-            ":etat" => $tab['etat'], 
+            ":etat" => trim($tab['etat']), 
             ":idvehicule" => $tab['idvehicule']
         ));
     }
