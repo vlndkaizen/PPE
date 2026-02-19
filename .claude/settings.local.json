@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:/wamp64/bin/mysql/mysql8.2.0/bin/mysql.exe\" -u root auto_ecole -e \"ALTER TABLE candidats ADD COLUMN premier_connexion TINYINT\\(1\\) NOT NULL DEFAULT 1;\")"
+    ]
+  }
+}

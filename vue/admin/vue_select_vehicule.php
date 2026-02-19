@@ -20,10 +20,10 @@
                         <td><?php echo htmlspecialchars($unVehicule['modele']); ?></td>
                         <td class="plate"><?php echo htmlspecialchars($unVehicule['immatriculation']); ?></td>
                         <td>
-                            <?php 
+                            <?php
                                 $statut = $unVehicule['etat'] ?? 'Disponible';
                                 $color = ($statut == 'Disponible') ? '#00ff00' : '#ff4444';
-                                echo "<span style='color:$color'>● $statut</span>";
+                                echo "<span style='color:" . htmlspecialchars($color, ENT_QUOTES) . "'>● " . htmlspecialchars($statut, ENT_QUOTES, 'UTF-8') . "</span>";
                             ?>
                         </td>
                         

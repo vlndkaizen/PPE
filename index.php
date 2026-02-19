@@ -10,18 +10,33 @@ $lescandidats = $lesmoniteurs = $lesvehicules = $lescours = array();
 // === FONCTION DE VALIDATION ===
 function validerDonnees($data, $isInscription = false) {
     $erreurs = [];
-    
-    if (!empty($data['nom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['nom'])) {
-        $erreurs[] = "Le nom ne peut contenir que des lettres.";
+
+    // NOM : lettres uniquement, min 2 caractères
+    if (!empty($data['nom'])) {
+        $nom = trim($data['nom']);
+        if (strlen($nom) < 2) {
+            $erreurs[] = "Le nom doit contenir au moins 2 caractères.";
+        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $nom)) {
+            $erreurs[] = "Le nom ne peut contenir que des lettres.";
+        }
     }
-    if (!empty($data['prenom']) && !preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $data['prenom'])) {
-        $erreurs[] = "Le prénom ne peut contenir que des lettres.";
+
+    // PRÉNOM : lettres uniquement, min 2 caractères
+    if (!empty($data['prenom'])) {
+        $prenom = trim($data['prenom']);
+        if (strlen($prenom) < 2) {
+            $erreurs[] = "Le prénom doit contenir au moins 2 caractères.";
+        } elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s\-']+$/u", $prenom)) {
+            $erreurs[] = "Le prénom ne peut contenir que des lettres.";
+        }
     }
-    
-    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+
+    // EMAIL : format valide
+    if (!empty($data['email']) && !filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL)) {
         $erreurs[] = "L'email doit être valide (contenir @ et un domaine comme .fr, .com).";
     }
-    
+
+    // TÉLÉPHONE : min 10 chiffres
     if (!empty($data['tel'])) {
         $tel_propre = preg_replace('/[^0-9]/', '', $data['tel']);
         if (strlen($tel_propre) < 10) {
@@ -31,7 +46,8 @@ function validerDonnees($data, $isInscription = false) {
             $erreurs[] = "Le téléphone ne peut contenir que des chiffres, espaces, +, -, (, ).";
         }
     }
-    
+
+    // DATES
     if (!empty($data['date_code']) && !empty($data['date_permis'])) {
         if ($data['date_code'] === $data['date_permis']) {
             $erreurs[] = "La date prévue du code ne peut pas être identique à celle du permis.";
@@ -40,16 +56,46 @@ function validerDonnees($data, $isInscription = false) {
             $erreurs[] = "La date du permis doit être postérieure à celle du code.";
         }
     }
-    
+
+    // MOT DE PASSE : obligatoire à l'inscription, avec règles de sécurité
     if ($isInscription) {
         if (empty($data['mdp'])) {
             $erreurs[] = "Le mot de passe est obligatoire.";
+        } else {
+            if (strlen($data['mdp']) < 8) {
+                $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
+            }
+            if (preg_match('/\s/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe ne peut pas contenir d'espaces.";
+            }
+            if (!preg_match('/[A-Z]/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe doit contenir au moins une majuscule.";
+            }
+            if (!preg_match('/[0-9]/', $data['mdp'])) {
+                $erreurs[] = "Le mot de passe doit contenir au moins un chiffre.";
+            }
         }
         if (!empty($data['mdp']) && !empty($data['mdp2']) && $data['mdp'] !== $data['mdp2']) {
             $erreurs[] = "Les mots de passe ne correspondent pas.";
         }
     }
-    
+
+    // MOT DE PASSE : optionnel en modification, mais si fourni doit respecter les règles
+    if (!$isInscription && !empty($data['mdp'])) {
+        if (strlen($data['mdp']) < 8) {
+            $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if (preg_match('/\s/', $data['mdp'])) {
+            $erreurs[] = "Le mot de passe ne peut pas contenir d'espaces.";
+        }
+        if (!preg_match('/[A-Z]/', $data['mdp'])) {
+            $erreurs[] = "Le mot de passe doit contenir au moins une majuscule.";
+        }
+        if (!preg_match('/[0-9]/', $data['mdp'])) {
+            $erreurs[] = "Le mot de passe doit contenir au moins un chiffre.";
+        }
+    }
+
     return $erreurs;
 }
 
@@ -57,8 +103,8 @@ function validerDonnees($data, $isInscription = false) {
 if (isset($_POST['changer_mdp_premier'])) {
     if ($_POST['nouveau_mdp'] !== $_POST['nouveau_mdp2']) {
         $message = '<div class="alert alert-error">❌ Les mots de passe ne correspondent pas.</div>';
-    } elseif (strlen($_POST['nouveau_mdp']) < 5) {
-        $message = '<div class="alert alert-error">❌ Le mot de passe doit contenir au moins 5 caractères.</div>';
+    } elseif (strlen($_POST['nouveau_mdp']) < 8) {
+        $message = '<div class="alert alert-error">❌ Le mot de passe doit contenir au moins 8 caractères.</div>';
     } else {
         // Mise à jour du mot de passe + premier_connexion = 0
         $unControleur->changerMotDePassePremierConnexion($_SESSION['idcandidat'], $_POST['nouveau_mdp']);
@@ -142,7 +188,7 @@ if (isset($_POST['Sinscrire'])) {
 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
     
     if (isset($_POST['valider'])) {
-        $erreurs = validerDonnees($_POST);
+        $erreurs = validerDonnees($_POST, true);
         if (empty($erreurs)) {
             try {
                 // AJOUT: Admin ajoute candidat = premier_connexion à 1
