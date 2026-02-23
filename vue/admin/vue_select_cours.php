@@ -28,16 +28,17 @@
                             <?php else: ?>
                                 <span class="badge" style="background: #e78a6d; color: white;">À venir</span>
                             <?php endif; ?>
-                        </td>
-                        <td style="text-align:center;">
-                            <a href="index.php?page=8&action=editCours&idcours=<?= $unCours['idcours'] ?>">
-                                <img src="image/modifier.png" height="20" title="Modifier">
+                            <td style="text-align: center;">
+                            <a href="index.php?page=5&action=editCours&idcours=<?= $unCours['idcours'] ?>" style="text-decoration: none; border: none;">
+                            <img src="image/modifier.png" height="20" title="Modifier" style="cursor: pointer; vertical-align: middle;">
                             </a>
-                            <a href="index.php?page=8&action=supCours&idcours=<?= $unCours['idcours'] ?>" 
-                               onclick="return confirm('Supprimer définitivement ce cours ?');" style="margin-left:15px;">
-                                <img src="image/supprimer.png" height="20" title="Supprimer">
+                            <a href="index.php?page=5&action=supCours&idcours=<?= $unCours['idcours'] ?>"
+                             onclick="return confirm('Supprimer définitivement ce cours ?');"  
+                             style="margin-left:15px; text-decoration: none; border: none;">
+                            <img src="image/supprimer.png" height="20" title="Supprimer" style="cursor: pointer; vertical-align: middle;">
                             </a>
                         </td>
+                        
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 19 fév. 2026 à 14:36
--- Version du serveur : 8.2.0
--- Version de PHP : 8.2.13
+-- Généré le : lun. 23 fév. 2026 à 14:09
+-- Version du serveur : 8.4.7
+-- Version de PHP : 8.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,35 +30,39 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `candidats`;
 CREATE TABLE IF NOT EXISTS `candidats` (
   `idcandidat` int NOT NULL AUTO_INCREMENT,
-  `nom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `prenom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mdp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tel` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `adresse` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prenom` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mdp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `premier_connexion` tinyint(1) DEFAULT '1',
+  `tel` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adresse` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `est_etudiant` tinyint(1) DEFAULT '0',
-  `nom_ecole` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom_ecole` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date_prevue_code` date DEFAULT NULL,
   `date_prevue_permis` date DEFAULT NULL,
-  `premier_connexion` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`idcandidat`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `candidats`
 --
 
-INSERT INTO `candidats` (`idcandidat`, `nom`, `prenom`, `email`, `mdp`, `tel`, `adresse`, `est_etudiant`, `nom_ecole`, `date_prevue_code`, `date_prevue_permis`) VALUES
-(1, 'leplusbo', 'bachirGoat', 'goat@gmail.com', '$2y$10$U68SM.OZnQFL0fczEBfgq.5qtnLBSkawxREHyDAiLe0unhLu8J8mS', '23455644', 'paris', 1, 'iris', '2026-02-27', '2026-03-20'),
-(7, 'legoat', 'legoat', 'dupont@castellane.fr', '$2y$10$WRx1FnDwPycQS1FCXztxNeCAcA6aXsP0cf4QXar2VpLuCvgRPE1f2', '345676543', 'paris la france ', 1, '', NULL, NULL),
-(3, 'Benadjila', 'Maria', 'maria@gmail.com', '$2y$10$VpOLpFFCyTVVn11qX9UBIulHCHEBxsI.V4lpOMvf1xyoRl1nInPuK', '5654567', 'paris', 1, 'iris', NULL, NULL),
-(4, 'Haroun', 'Djihane', 'Haroun@gmail.com', '$2y$10$DWzJf3.ZOrEVDYWAaubPSuhAQhvnvJaOi9UpNJ1UFX8LjZfFYisSW', '78086789', 'paris', 1, 'iris', NULL, NULL),
-(5, 'Drame', 'Youma', 'drame@gmail.com', '$2y$10$oqnC0hp34j.aGXzONvm61OmHigBOIQH7CPuGsiyhVBZvSZ2b753aG', '6789778', 'paris', 1, 'iris', NULL, NULL),
-(6, 'Aboghe', 'Rayna', 'aboghe@gmail.com', '$2y$10$qbWSCpEuCggHKcx7IgdtCO2Yfl5swr6HDZVYI2YOYH2Mo7u9dtqG.', '567345678', 'paris', 1, 'iris', NULL, NULL),
-(8, 'lagoat', 'lagoat', 'lagoat@gmail.com', '$2y$10$UICUcJ5U8deeSmkh8gim1u8MGa/Rno7x9KS0NKLMtGswvgBzE1eC6', '753464374', 'paris la france ', 1, '', NULL, NULL),
-(9, '1234', '11233', '11111@Gmail', '$2y$10$8/RXWvP8TNl9oupj9WAHlenW2mTagIdJLVuz0agUJuueC0oSfzH02', 'zeffefezec', '&éed  zz', 1, 'edzecaeéee&1133', NULL, NULL),
-(10, 'bsb', 'bsb', 'bsb@gmail.com', '$2y$10$1grZVCl6PhApgzjKxsLf2evLciI78FU2SZExnxPgTJeSXAP5o0QlG', '1234567891', 'paris', 1, '', NULL, NULL);
+INSERT INTO `candidats` (`idcandidat`, `nom`, `prenom`, `email`, `mdp`, `premier_connexion`, `tel`, `adresse`, `est_etudiant`, `nom_ecole`, `date_prevue_code`, `date_prevue_permis`) VALUES
+(1, 'leplusbo', 'bachirGoat', 'goat@gmail.com', '$2y$10$U68SM.OZnQFL0fczEBfgq.5qtnLBSkawxREHyDAiLe0unhLu8J8mS', 0, '23455644', 'paris', 1, 'iris', '2026-02-27', '2026-03-20'),
+(7, 'legoat', 'legoat', 'dupont@castellane.fr', '$2y$10$WRx1FnDwPycQS1FCXztxNeCAcA6aXsP0cf4QXar2VpLuCvgRPE1f2', 0, '345676543', 'paris la france ', 1, '', NULL, NULL),
+(3, 'Benadjila', 'Maria', 'maria@gmail.com', '$2y$10$VpOLpFFCyTVVn11qX9UBIulHCHEBxsI.V4lpOMvf1xyoRl1nInPuK', 0, '5654567', 'paris', 1, 'iris', NULL, NULL),
+(4, 'Haroun', 'Djihane', 'Haroun@gmail.com', '$2y$10$DWzJf3.ZOrEVDYWAaubPSuhAQhvnvJaOi9UpNJ1UFX8LjZfFYisSW', 0, '78086789', 'paris', 1, 'iris', NULL, NULL),
+(5, 'Drame', 'Youma', 'drame@gmail.com', '$2y$10$oqnC0hp34j.aGXzONvm61OmHigBOIQH7CPuGsiyhVBZvSZ2b753aG', 0, '6789778', 'paris', 1, 'iris', NULL, NULL),
+(6, 'Aboghe', 'Rayna', 'aboghe@gmail.com', '$2y$10$qbWSCpEuCggHKcx7IgdtCO2Yfl5swr6HDZVYI2YOYH2Mo7u9dtqG.', 0, '567345678', 'paris', 1, 'iris', NULL, NULL),
+(8, 'lagoat', 'lagoat', 'lagoat@gmail.com', '$2y$10$UICUcJ5U8deeSmkh8gim1u8MGa/Rno7x9KS0NKLMtGswvgBzE1eC6', 0, '753464374', 'paris la france ', 1, '', NULL, NULL),
+(9, '1234', '11233', '11111@Gmail', '$2y$10$8/RXWvP8TNl9oupj9WAHlenW2mTagIdJLVuz0agUJuueC0oSfzH02', 0, 'zeffefezec', '&éed  zz', 1, 'edzecaeéee&1133', NULL, NULL),
+(10, 'bsb', 'bsb', 'bsb@gmail.com', '$2y$10$1grZVCl6PhApgzjKxsLf2evLciI78FU2SZExnxPgTJeSXAP5o0QlG', 0, '1234567891', 'paris', 1, '', NULL, NULL),
+(11, 'test', 'test', 'test@gmail.com', '$2y$10$uwgt01g78wUUZzHetwPgEu.vC0RARtMh.p82zX0dS6Wmk3ckOFJYS', 0, '1234567888', '', 0, '', NULL, NULL),
+(12, 'teste', 'teste', 'teste@gmail.com', '$2y$10$a/IRsbxDJOY.Q2CTTE0.uuGnwxg3TgOxRJ30tyS4Qc4i5z4Xly99e', 0, '1234567888', 'paris', 0, '', NULL, NULL),
+(13, 'mira', 'mira', 'mira@gmail.com', '$2y$10$Mm8B0e0Achi0gn0ybwT.Xuoi.McIQ5E3i1.gqJ8vK7hti5ckW054S', 1, '3456784567', 'paris', 0, '', NULL, NULL),
+(14, 'Dubois', 'Stella', 'dubois@gmail.com', '$2y$10$9kJ1rsm/Q2H26lyi.k1FH.BnsMQgWek4FIr7cCjLci6GvTACPn5qS', 1, '0889909877', 'paris', 0, 'iris', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -72,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `cours` (
   `date_cours` date DEFAULT NULL,
   `heure_debut` time DEFAULT NULL,
   `heure_fin` time DEFAULT NULL,
-  `statut` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'À venir',
+  `statut` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'À venir',
   `idvehicule` int NOT NULL,
   `idmoniteur` int NOT NULL,
   `idcandidat` int NOT NULL,
@@ -87,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `cours` (
 --
 
 INSERT INTO `cours` (`idcours`, `date_cours`, `heure_debut`, `heure_fin`, `statut`, `idvehicule`, `idmoniteur`, `idcandidat`) VALUES
-(1, '2026-02-13', '07:50:00', '08:50:00', 'À venir', 7, 4, 3),
+(1, '2026-02-13', '07:50:00', '08:50:00', 'Effectué', 7, 4, 3),
 (2, '2026-02-11', '09:00:00', '10:00:00', 'Effectué', 7, 4, 3),
 (3, '2026-02-15', '11:00:00', '12:00:00', 'À venir', 12, 1, 2),
 (4, '2026-02-10', '13:00:00', '14:00:00', 'Effectué', 16, 1, 2),
@@ -113,14 +117,14 @@ INSERT INTO `cours` (`idcours`, `date_cours`, `heure_debut`, `heure_fin`, `statu
 DROP TABLE IF EXISTS `moniteur`;
 CREATE TABLE IF NOT EXISTS `moniteur` (
   `idmoniteur` int NOT NULL AUTO_INCREMENT,
-  `nom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `prenom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mdp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tel` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `adresse` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prenom` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mdp` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tel` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adresse` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `experience` int DEFAULT NULL,
-  `type_permis` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type_permis` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`idmoniteur`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -144,11 +148,11 @@ INSERT INTO `moniteur` (`idmoniteur`, `nom`, `prenom`, `email`, `mdp`, `tel`, `a
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `iduser` int NOT NULL AUTO_INCREMENT,
-  `nom` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `prenom` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mdp` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prenom` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mdp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`iduser`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -169,11 +173,11 @@ INSERT INTO `user` (`iduser`, `nom`, `prenom`, `email`, `mdp`, `role`) VALUES
 DROP TABLE IF EXISTS `vehicule`;
 CREATE TABLE IF NOT EXISTS `vehicule` (
   `idvehicule` int NOT NULL AUTO_INCREMENT,
-  `marque` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `modele` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `immatriculation` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `etat` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Disponible',
+  `marque` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `modele` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `immatriculation` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `etat` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT 'Disponible',
   PRIMARY KEY (`idvehicule`)
 ) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

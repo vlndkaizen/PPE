@@ -20,17 +20,22 @@ function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
                 <input type="email" name="email" value="<?php echo ($leMoniteur != null) ? htmlspecialchars($leMoniteur['email']) : ''; ?>" required>
             </div>
             
-            <!-- AJOUT: Champ mot de passe -->
             <?php if (!isset($leMoniteur) || $leMoniteur == null): ?>
                 <div class="input-group">
                     <label>Mot de passe *</label>
-                    <input type="password" name="mdp" required minlength="8" maxlength="100" placeholder="Mot de passe initial">
+                    <input type="password" name="mdp" id="mdp_moniteur" required minlength="8" maxlength="100" 
+                           pattern="(?=.*[A-Z])(?=.*\d)\S{8,}"
+                           title="8 caractères min, 1 majuscule, 1 chiffre, sans espaces"
+                           placeholder="Mot de passe initial">
                     <small style="color: #666; display: block; margin-top: 4px;">Min. 8 caractères, une majuscule, un chiffre, sans espaces.</small>
                 </div>
             <?php else: ?>
                 <div class="input-group">
                     <label>Nouveau mot de passe</label>
-                    <input type="password" name="mdp" minlength="8" maxlength="100" placeholder="Laisser vide si inchangé">
+                    <input type="password" name="mdp" id="mdp_moniteur" minlength="8" maxlength="100" 
+                           pattern="(?=.*[A-Z])(?=.*\d)\S{8,}|^$"
+                           title="8 caractères min, 1 majuscule, 1 chiffre, sans espaces"
+                           placeholder="Laisser vide si inchangé">
                     <small style="color: #666; display: block; margin-top: 4px;">Min. 8 caractères, une majuscule, un chiffre, sans espaces.</small>
                 </div>
             <?php endif; ?>
@@ -67,3 +72,9 @@ function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
         </div>
     </form>
 </div>
+
+<script>
+document.getElementById('mdp_moniteur')?.addEventListener('keydown', function(e) {
+    if (e.key === ' ') e.preventDefault();
+});
+</script>

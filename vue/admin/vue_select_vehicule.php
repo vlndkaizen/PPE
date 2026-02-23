@@ -22,24 +22,24 @@
                         <td>
                             <?php
                                 $statut = $unVehicule['etat'] ?? 'Disponible';
-                                $color = ($statut == 'Disponible') ? '#00ff00' : '#ff4444';
+                                $color = ($statut == 'Disponible') ? '#5dcd5d' : '#ff4444';
                                 echo "<span style='color:" . htmlspecialchars($color, ENT_QUOTES) . "'>● " . htmlspecialchars($statut, ENT_QUOTES, 'UTF-8') . "</span>";
                             ?>
                         </td>
                         
                            
                              
-                        <td style="text-align:center;">
-                            <a href="index.php?page=7&action=editVehicule&idvehicule=<?= $unVehicule['idvehicule']; ?>">
-                            <img src="image/modifier.png" height="20" title="Modifier">
+                        <td style="text-align: center;">
+                            <a href="index.php?page=7&action=editVehicule&idvehicule=<?= $unVehicule['idvehicule'] ?>" 
+                               style="text-decoration: none; border: none;">
+                                <img src="image/modifier.png" height="20" title="Modifier" style="cursor: pointer; vertical-align: middle;">
                             </a>
-
-                        <a href="index.php?page=7&action=supVehicule&idvehicule=<?= $unVehicule['idvehicule']; ?>"
-                        onclick="return confirm('Supprimer définitivement ?');"
-                        style="margin-left:15px;">
-                         <img src="image/supprimer.png" height="20" title="Supprimer">
-                         </a>
-</td>
+                            <a href="index.php?page=7&action=supVehicule&idvehicule=<?= $unVehicule['idvehicule'] ?>" 
+                               onclick="return confirm('Supprimer définitivement ce véhicule ?');" 
+                               style="margin-left:15px; text-decoration: none; border: none;">
+                                <img src="image/supprimer.png" height="20" title="Supprimer" style="cursor: pointer; vertical-align: middle;">
+                            </a>
+                        </td>   
 
                         
                 </td>
