@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 23 fév. 2026 à 14:09
+-- Généré le : mar. 10 mars 2026 à 13:28
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.3.28
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `candidats` (
   `date_prevue_permis` date DEFAULT NULL,
   PRIMARY KEY (`idcandidat`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `candidats`
@@ -62,7 +62,8 @@ INSERT INTO `candidats` (`idcandidat`, `nom`, `prenom`, `email`, `mdp`, `premier
 (11, 'test', 'test', 'test@gmail.com', '$2y$10$uwgt01g78wUUZzHetwPgEu.vC0RARtMh.p82zX0dS6Wmk3ckOFJYS', 0, '1234567888', '', 0, '', NULL, NULL),
 (12, 'teste', 'teste', 'teste@gmail.com', '$2y$10$a/IRsbxDJOY.Q2CTTE0.uuGnwxg3TgOxRJ30tyS4Qc4i5z4Xly99e', 0, '1234567888', 'paris', 0, '', NULL, NULL),
 (13, 'mira', 'mira', 'mira@gmail.com', '$2y$10$Mm8B0e0Achi0gn0ybwT.Xuoi.McIQ5E3i1.gqJ8vK7hti5ckW054S', 1, '3456784567', 'paris', 0, '', NULL, NULL),
-(14, 'Dubois', 'Stella', 'dubois@gmail.com', '$2y$10$9kJ1rsm/Q2H26lyi.k1FH.BnsMQgWek4FIr7cCjLci6GvTACPn5qS', 1, '0889909877', 'paris', 0, 'iris', NULL, NULL);
+(14, 'Dubois', 'Stella', 'dubois@gmail.com', '$2y$10$dunNW/geS4o1RRPvEwD8Mu8IaHptaYZUm3znujrPUm//QMnHFRnU2', 0, '0889909877', 'paris', 0, 'iris', NULL, NULL),
+(15, 'Sy', 'Ama', 'ama@gmail.com', '$2y$10$0ZvU8O0ZOYf6rU6YnC9zXub/RSu9G4FN91SRh592lER.Inp2v2dPe', 0, '1234567899', '', 0, '', NULL, NULL);
 
 -- --------------------------------------------------------
 
