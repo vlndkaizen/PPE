@@ -3,30 +3,31 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 23 fév. 2026 à 14:09
+-- Généré le : mar. 10 mars 2026 à 13:28
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.3.28
-
+ Drop database if EXISTS auto_ecole ;
+ create database auto_ecole;
+ use auto_ecole;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
+ 
+ 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-
+ 
 --
 -- Base de données : `auto_ecole`
 --
-
+ 
 -- --------------------------------------------------------
-
+ 
 --
 -- Structure de la table `candidats`
 --
-
 DROP TABLE IF EXISTS `candidats`;
 CREATE TABLE IF NOT EXISTS `candidats` (
   `idcandidat` int NOT NULL AUTO_INCREMENT,
@@ -43,12 +44,12 @@ CREATE TABLE IF NOT EXISTS `candidats` (
   `date_prevue_permis` date DEFAULT NULL,
   PRIMARY KEY (`idcandidat`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ 
 --
 -- Déchargement des données de la table `candidats`
 --
-
+ 
 INSERT INTO `candidats` (`idcandidat`, `nom`, `prenom`, `email`, `mdp`, `premier_connexion`, `tel`, `adresse`, `est_etudiant`, `nom_ecole`, `date_prevue_code`, `date_prevue_permis`) VALUES
 (1, 'leplusbo', 'bachirGoat', 'goat@gmail.com', '$2y$10$U68SM.OZnQFL0fczEBfgq.5qtnLBSkawxREHyDAiLe0unhLu8J8mS', 0, '23455644', 'paris', 1, 'iris', '2026-02-27', '2026-03-20'),
 (7, 'legoat', 'legoat', 'dupont@castellane.fr', '$2y$10$WRx1FnDwPycQS1FCXztxNeCAcA6aXsP0cf4QXar2VpLuCvgRPE1f2', 0, '345676543', 'paris la france ', 1, '', NULL, NULL),
@@ -62,14 +63,14 @@ INSERT INTO `candidats` (`idcandidat`, `nom`, `prenom`, `email`, `mdp`, `premier
 (11, 'test', 'test', 'test@gmail.com', '$2y$10$uwgt01g78wUUZzHetwPgEu.vC0RARtMh.p82zX0dS6Wmk3ckOFJYS', 0, '1234567888', '', 0, '', NULL, NULL),
 (12, 'teste', 'teste', 'teste@gmail.com', '$2y$10$a/IRsbxDJOY.Q2CTTE0.uuGnwxg3TgOxRJ30tyS4Qc4i5z4Xly99e', 0, '1234567888', 'paris', 0, '', NULL, NULL),
 (13, 'mira', 'mira', 'mira@gmail.com', '$2y$10$Mm8B0e0Achi0gn0ybwT.Xuoi.McIQ5E3i1.gqJ8vK7hti5ckW054S', 1, '3456784567', 'paris', 0, '', NULL, NULL),
-(14, 'Dubois', 'Stella', 'dubois@gmail.com', '$2y$10$9kJ1rsm/Q2H26lyi.k1FH.BnsMQgWek4FIr7cCjLci6GvTACPn5qS', 1, '0889909877', 'paris', 0, 'iris', NULL, NULL);
-
+(14, 'Dubois', 'Stella', 'dubois@gmail.com', '$2y$10$dunNW/geS4o1RRPvEwD8Mu8IaHptaYZUm3znujrPUm//QMnHFRnU2', 0, '0889909877', 'paris', 0, 'iris', NULL, NULL);
+ 
 -- --------------------------------------------------------
-
+ 
 --
 -- Structure de la table `cours`
 --
-
+ 
 DROP TABLE IF EXISTS `cours`;
 CREATE TABLE IF NOT EXISTS `cours` (
   `idcours` int NOT NULL AUTO_INCREMENT,
@@ -85,11 +86,11 @@ CREATE TABLE IF NOT EXISTS `cours` (
   KEY `fk_m` (`idmoniteur`),
   KEY `fk_c` (`idcandidat`)
 ) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 --
 -- Déchargement des données de la table `cours`
 --
-
+ 
 INSERT INTO `cours` (`idcours`, `date_cours`, `heure_debut`, `heure_fin`, `statut`, `idvehicule`, `idmoniteur`, `idcandidat`) VALUES
 (1, '2026-02-13', '07:50:00', '08:50:00', 'Effectué', 7, 4, 3),
 (2, '2026-02-11', '09:00:00', '10:00:00', 'Effectué', 7, 4, 3),
@@ -107,13 +108,13 @@ INSERT INTO `cours` (`idcours`, `date_cours`, `heure_debut`, `heure_fin`, `statu
 (14, '2026-02-28', '10:00:00', '11:00:00', 'À venir', 4, 2, 6),
 (15, '2026-03-20', '15:00:00', '16:00:00', 'À venir', 16, 4, 1),
 (16, '2026-02-20', '17:45:00', '18:45:00', 'À venir', 2, 1, 3);
-
+ 
 -- --------------------------------------------------------
-
+ 
 --
 -- Structure de la table `moniteur`
 --
-
+ 
 DROP TABLE IF EXISTS `moniteur`;
 CREATE TABLE IF NOT EXISTS `moniteur` (
   `idmoniteur` int NOT NULL AUTO_INCREMENT,
@@ -128,23 +129,23 @@ CREATE TABLE IF NOT EXISTS `moniteur` (
   PRIMARY KEY (`idmoniteur`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 --
 -- Déchargement des données de la table `moniteur`
 --
-
+ 
 INSERT INTO `moniteur` (`idmoniteur`, `nom`, `prenom`, `email`, `mdp`, `tel`, `adresse`, `experience`, `type_permis`) VALUES
 (1, 'Benahmed', 'Okacha', 'benahmed@castellane.fr', '$2y$10$YdqyMIVZ8IrZKkU4Mya9uOZx5/UBWygLG.6C42aQoFf0KPeAqHDN6', '78967567', 'paris', 10, 'B'),
 (2, 'Dupont', 'Jean', 'dupont@castellane.fr', '$2y$10$26g53Q7WInSdqC0B1vOLI.tB0COLdURAMEc8aAX4CW.7nLb17pbna', '65456542', 'paris', 4, 'B+A'),
 (3, 'Dubois', 'Marie', 'dubois@castellane.fr', '$2y$10$vzUAGS6i/3t.fBZk7zWoxeJ9wWOhKBfQgfEPl1H4V2w2Q8Ol/lGWS', '6789765678', 'paris', 7, 'B'),
 (4, 'Martin', 'Sophie', 'martin@castellane.fr', '$2y$10$gIur73MsFFdWROnBWuKEUu6FSA89aas.cOY3h4o3/s1ViTeNUmib6', '6789678', 'paris', 8, 'A');
-
+ 
 -- --------------------------------------------------------
-
+ 
 --
 -- Structure de la table `user`
 --
-
+ 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `iduser` int NOT NULL AUTO_INCREMENT,
@@ -156,20 +157,20 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`iduser`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 --
 -- Déchargement des données de la table `user`
 --
-
+ 
 INSERT INTO `user` (`iduser`, `nom`, `prenom`, `email`, `mdp`, `role`) VALUES
 (1, 'Lejars', 'Murielle', 'admin@castellane.fr', '123', 'admin');
-
+ 
 -- --------------------------------------------------------
-
+ 
 --
 -- Structure de la table `vehicule`
 --
-
+ 
 DROP TABLE IF EXISTS `vehicule`;
 CREATE TABLE IF NOT EXISTS `vehicule` (
   `idvehicule` int NOT NULL AUTO_INCREMENT,
@@ -180,17 +181,17 @@ CREATE TABLE IF NOT EXISTS `vehicule` (
   `etat` varchar(25) COLLATE utf8mb4_unicode_ci DEFAULT 'Disponible',
   PRIMARY KEY (`idvehicule`)
 ) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 --
 -- Déchargement des données de la table `vehicule`
 --
-
+ 
 INSERT INTO `vehicule` (`idvehicule`, `marque`, `modele`, `immatriculation`, `image`, `etat`) VALUES
 (1, 'Seat', 'leon', 'CC-456-DK', 'veh_698d497022e9b9.80690019.jpg', 'Disponible'),
 (2, 'Seat', 'ibiza', 'PC-786-EF', 'veh_698d497c645732.88364249.jpg', 'Disponible'),
 (3, 'Peugeot', '208', 'CC-456-DD', 'veh_698d49acc48336.04340770.jpg', 'En réparation'),
 (4, 'Renault', 'megane', 'CC-456-YU', 'veh_698d49ce2dc391.97557048.jpg', 'Disponible'),
-(5, 'Nissan', 'Micra', '	AD-489-DL', 'veh_698d49eb32aaa9.50188729.jpg', 'Disponible'),
+(5, 'Nissan', 'Micra', '  AD-489-DL', 'veh_698d49eb32aaa9.50188729.jpg', 'Disponible'),
 (6, 'Citroen ', 'C3', 'VB-695-FU', 'veh_698d4a0f3a22c8.85627882.jpg', 'Disponible'),
 (7, 'BMW', 'série 1', 'PC-490-JI', 'veh_698d4aaaed5843.55517181.jpg', 'Disponible'),
 (8, 'Dacia', 'Duster', 'EC-332-OL', 'veh_698d4ad93e1bb6.92559462.jpg', 'Disponible'),
@@ -203,7 +204,7 @@ INSERT INTO `vehicule` (`idvehicule`, `marque`, `modele`, `immatriculation`, `im
 (15, 'Dacia', 'sandero', 'PP-790-EZ', 'veh_698d4c2f015b71.05696627.jpg', 'Disponible'),
 (16, 'Audi', 'S3', 'MU-466-DI', 'veh_698d4d241b6eb7.27327554.jpg', 'Disponible');
 COMMIT;
-
+ 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
