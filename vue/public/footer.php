@@ -43,8 +43,10 @@
     <!-- Copyright -->
     <div style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 40px; padding-top: 20px; text-align: center; color: rgba(255,255,255,0.7);">
         <p>&copy; <?= date('Y') ?> Castellane Auto-École. Tous droits réservés.</p>
-        <p style="margin-top: 10px; font-size: 0.9rem;">
-            Agrément préfecture : E 83 000 XXXX | N° SIRET : XXX XXX XXX XXXXX
-        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap small">
+        <span>Agrément préfecture : E 83 045 6789 |</span>
+        <span>N° SIRET : 512 456 789 00027 |</span>
+        <span>Siège social : 12 Avenue de la Liberté, 83000 Toulon </span>
+    </div>
     </div>
 </footer>
