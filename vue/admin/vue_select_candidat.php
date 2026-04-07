@@ -10,6 +10,7 @@
                 <th>NOM</th>
                 <th>PRÉNOM</th>
                 <th>EMAIL</th>
+                <th>TÉL</th>
                 <th>ACTIONS</th>
             </tr>
         </thead>
@@ -35,7 +36,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5" style="text-align:center; color:#666; padding:30px;">
+                    <td colspan="6" style="text-align:center; color:#666; padding:30px;">
                         Aucun candidat enregistré dans la base de données.
                     </td>
                 </tr>
